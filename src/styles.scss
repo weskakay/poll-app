@@ -1,1 +1,41 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  /* Colors */
+  --color-primary:        #35273A;
+  --color-accent:         #FFB770;
+  --color-accent-light:   #FFCFA1;
+  --color-card-bg:        #FAF5FE;
+  --color-bg-light:       #FEFDFF;
+  --color-text-dark:      #221227;
+  --color-tint-orange:    #FEE9D4;
+  --color-tint-purple:    #F4E9FB;
+  --color-accent-strong:  #D79451;
+  --color-bar-track:      #EDEDED;
+  --color-scrollbar:      #BABABA;
+
+  --color-text-on-dark:   #FEFDFF;
+  --color-text-on-light:  #35273A;
+  --color-text-on-accent: #221227;
+
+  /* Fonts */
+  --font-display: 'Nerko One', cursive;
+  --font-button:  'Nokora', system-ui, -apple-system, sans-serif;
+  --font-body:    'Mulish', system-ui, -apple-system, sans-serif;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+
+  /* Radii */
+  --radius-sharp:   3px;
+  --radius-button:  5px;
+  --radius-input:   6px;
+  --radius-cta:     10px;
+  --radius-pill-sm: 14px;
+  --radius-pill-lg: 20px;
+  --radius-card:    50px;
+  --radius-card-xl: 80px;
+}
