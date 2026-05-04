@@ -1,0 +1,20 @@
+<main class="home">
+  <header class="home__header">
+    <h1 class="home__title">Poll App</h1>
+    <p class="home__subtitle">What do you want to know today?</p>
+  </header>
+
+  <section class="home__list" aria-label="Polls">
+    @if (loading()) {
+      <p class="home__status">Loading polls…</p>
+    } @else if (error()) {
+      <p class="home__status home__status--error">{{ error() }}</p>
+    } @else {
+      @for (poll of polls(); track poll.id) {
+        <app-poll-card [poll]="poll" />
+      } @empty {
+        <p class="home__status">Noch keine Umfragen — leg die erste an.</p>
+      }
+    }
+  </section>
+</main>
