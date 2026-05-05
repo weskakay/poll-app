@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.poll-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.poll-results__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.poll-results__letter {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.875rem;
+  width: 1rem;
+}
+
+.poll-results__bar {
+  flex: 1;
+  height: 14px;
+  background: var(--color-bar-track);
+  border-radius: var(--radius-pill-lg);
+  overflow: hidden;
+}
+
+.poll-results__fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: var(--radius-pill-lg);
+  transition: width 600ms ease-out;
+}
+
+.poll-results__percent {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.875rem;
+  color: var(--color-accent-strong);
+  min-width: 2.5rem;
+  text-align: right;
+}

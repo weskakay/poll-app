@@ -1,0 +1,18 @@
+<div class="poll-results">
+  @for (result of results(); track $index) {
+    <div class="poll-results__row">
+      <span class="poll-results__letter">{{ result.letter }}</span>
+      <div
+        class="poll-results__bar"
+        role="progressbar"
+        [attr.aria-valuenow]="result.percent"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-label]="result.label"
+      >
+        <div class="poll-results__fill" [style.width.%]="result.percent"></div>
+      </div>
+      <span class="poll-results__percent">{{ result.percent }}%</span>
+    </div>
+  }
+</div>

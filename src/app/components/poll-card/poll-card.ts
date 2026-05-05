@@ -1,9 +1,11 @@
 import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import type { Poll } from '../../interfaces/poll.interface';
 
 /** Visual card showing a single poll's question and option count. */
 @Component({
   selector: 'app-poll-card',
+  imports: [RouterLink],
   templateUrl: './poll-card.html',
   styleUrl: './poll-card.scss',
 })

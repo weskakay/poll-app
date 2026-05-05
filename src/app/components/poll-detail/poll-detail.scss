@@ -1,0 +1,222 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: var(--color-primary);
+}
+
+.poll-detail {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  color: var(--color-text-on-dark);
+  font-family: var(--font-body);
+}
+
+.poll-detail__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-5);
+}
+
+.poll-detail__back {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.poll-detail__back:hover,
+.poll-detail__back:focus-visible {
+  text-decoration: underline;
+}
+
+.poll-detail__delete {
+  background: transparent;
+  color: var(--color-text-on-dark);
+  border: 1px solid var(--color-text-on-dark);
+  font-family: var(--font-button);
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-button);
+  transition: background 150ms ease;
+}
+
+.poll-detail__delete:hover,
+.poll-detail__delete:focus-visible {
+  background: var(--overlay-orange-hover);
+  border-color: var(--color-accent);
+}
+
+.poll-detail__question {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--color-accent);
+  margin: 0 0 var(--space-5);
+  line-height: 1.1;
+}
+
+.poll-detail__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: 0;
+  padding: 0;
+  margin: 0 0 var(--space-4);
+}
+
+.poll-detail__legend {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: var(--space-2);
+}
+
+.poll-detail__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.poll-detail__option:hover,
+.poll-detail__option:focus-within {
+  background: var(--overlay-orange-default);
+}
+
+.poll-detail__radio {
+  accent-color: var(--color-accent);
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.poll-detail__option-letter {
+  font-weight: 700;
+  width: 1.5rem;
+}
+
+.poll-detail__option-label {
+  flex: 1;
+}
+
+.poll-detail__error {
+  background: var(--color-tint-orange);
+  color: var(--color-text-on-light);
+  padding: var(--space-3);
+  border-radius: var(--radius-button);
+  margin: 0 0 var(--space-3);
+  font-size: 0.875rem;
+}
+
+.poll-detail__submit {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1.125rem;
+  border: 0;
+  border-radius: var(--radius-cta);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  min-width: 200px;
+  transition: background 150ms ease;
+}
+
+.poll-detail__submit:hover:not(:disabled),
+.poll-detail__submit:focus-visible:not(:disabled) {
+  background: var(--color-accent-light);
+}
+
+.poll-detail__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.poll-detail__voted {
+  margin-top: var(--space-4);
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.poll-detail__status {
+  text-align: center;
+  opacity: 0.7;
+  padding: var(--space-6);
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-modal-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 100;
+}
+
+.dialog {
+  background: var(--color-card-bg);
+  color: var(--color-text-on-light);
+  border-radius: 0 var(--radius-card-xl) 0 0;
+  padding: var(--space-6) var(--space-4);
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dialog__title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.dialog__body {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.dialog__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.dialog__cancel,
+.dialog__confirm {
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-cta);
+  border: 0;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.dialog__cancel {
+  background: transparent;
+  color: var(--color-text-on-light);
+  border: 1px solid var(--color-text-on-light);
+}
+
+.dialog__cancel:hover,
+.dialog__cancel:focus-visible {
+  background: var(--color-tint-purple);
+}
+
+.dialog__confirm {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+}
+
+.dialog__confirm:hover,
+.dialog__confirm:focus-visible {
+  background: var(--color-accent-light);
+}

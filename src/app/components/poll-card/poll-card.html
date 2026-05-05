@@ -1,4 +1,4 @@
-<article class="poll-card">
+<a [routerLink]="['/poll', poll().id]" class="poll-card">
   <h2 class="poll-card__question">{{ poll().question }}</h2>
   <span class="poll-card__meta">{{ poll().options.length }} options</span>
-</article>
+</a>

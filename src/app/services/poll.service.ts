@@ -59,6 +59,57 @@ export class PollService implements OnDestroy {
     return true;
   }
 
+  /** Increments the vote count of a single option. */
+  async vote(pollId: string, optionIndex: number): Promise<boolean> {
+    this.error.set(null);
+
+    const poll = this.polls().find((p) => p.id === pollId);
+    if (!poll) {
+      this.error.set('Poll not found');
+      return false;
+    }
+
+    const updatedOptions = poll.options.map((option, i) =>
+      i === optionIndex ? { ...option, votes: option.votes + 1 } : option,
+    );
+
+    const { error } = await this.supabase.client
+      .from('polls')
+      .update({ options: updatedOptions })
+      .eq('id', pollId);
+
+    if (error) {
+      this.error.set(error.message);
+      return false;
+    }
+
+    return true;
+  }
+
+  /** Deletes a poll. The realtime channel removes it from the store. */
+  async delete(pollId: string): Promise<boolean> {
+    this.error.set(null);
+
+    const { error } = await this.supabase.client
+      .from('polls')
+      .delete()
+      .eq('id', pollId);
+
+    if (error) {
+      this.error.set(error.message);
+      return false;
+    }
+
+    return true;
+  }
+
+  /** Loads all polls only if the store is empty. */
+  async ensureLoaded(): Promise<void> {
+    if (this.polls().length === 0) {
+      await this.loadAll();
+    }
+  }
+
   /** Opens a realtime channel that mirrors INSERT/UPDATE/DELETE into the store. */
   subscribe(): void {
     if (this.channel) {
