@@ -1,4 +1,5 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, OnDestroy, signal } from '@angular/core';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { SupabaseService } from './supabase.service';
 import type { Poll } from '../interfaces/poll.interface';
 
@@ -11,8 +12,9 @@ interface PollRow {
 
 /** Reads and exposes polls from supabase as a signal-based store. */
 @Injectable({ providedIn: 'root' })
-export class PollService {
+export class PollService implements OnDestroy {
   private readonly supabase = inject(SupabaseService);
+  private channel: RealtimeChannel | null = null;
 
   readonly polls = signal<Poll[]>([]);
   readonly loading = signal(false);
@@ -55,6 +57,55 @@ export class PollService {
 
     await this.loadAll();
     return true;
+  }
+
+  /** Opens a realtime channel that mirrors INSERT/UPDATE/DELETE into the store. */
+  subscribe(): void {
+    if (this.channel) {
+      return;
+    }
+
+    this.channel = this.supabase.client
+      .channel('polls-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'polls' },
+        (payload) => this.onInsert(payload.new as PollRow),
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'polls' },
+        (payload) => this.onUpdate(payload.new as PollRow),
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'polls' },
+        (payload) => this.onDelete((payload.old as { id: string }).id),
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy(): void {
+    if (this.channel) {
+      this.supabase.client.removeChannel(this.channel);
+      this.channel = null;
+    }
+  }
+
+  private onInsert(row: PollRow): void {
+    this.polls.update((current) =>
+      current.some((p) => p.id === row.id) ? current : [toPoll(row), ...current],
+    );
+  }
+
+  private onUpdate(row: PollRow): void {
+    this.polls.update((current) =>
+      current.map((p) => (p.id === row.id ? toPoll(row) : p)),
+    );
+  }
+
+  private onDelete(id: string): void {
+    this.polls.update((current) => current.filter((p) => p.id !== id));
   }
 }
 

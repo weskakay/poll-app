@@ -19,5 +19,6 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     this.pollService.loadAll();
+    this.pollService.subscribe();
   }
 }
