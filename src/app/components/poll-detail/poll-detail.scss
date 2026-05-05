@@ -50,7 +50,7 @@
 
 .poll-detail__question {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 7vw, 2.5rem);
   color: var(--color-accent);
   margin: 0 0 var(--space-5);
   line-height: 1.1;

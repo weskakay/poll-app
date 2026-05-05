@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: var(--color-primary);
+}
+
+.not-found {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  color: var(--color-text-on-dark);
+  font-family: var(--font-body);
+  text-align: center;
+}
+
+.not-found__title {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 15vw, 6rem);
+  color: var(--color-accent);
+  margin: 0 0 var(--space-4);
+  line-height: 1;
+}
+
+.not-found__message {
+  font-size: 1.125rem;
+  margin: 0 0 var(--space-5);
+  opacity: 0.8;
+}
+
+.not-found__back {
+  display: inline-block;
+  background: var(--color-accent-light);
+  color: var(--color-text-on-accent);
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-decoration: none;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-cta);
+  transition: background 150ms ease;
+}
+
+.not-found__back:hover,
+.not-found__back:focus-visible {
+  background: var(--color-accent);
+}

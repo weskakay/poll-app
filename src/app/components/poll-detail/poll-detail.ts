@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, HostListener, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PollService } from '../../services/poll.service';
 import { PollResults } from '../poll-results/poll-results';
@@ -71,6 +71,13 @@ export class PollDetail implements OnInit {
 
   protected cancelDelete(): void {
     this.showDeleteConfirm.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    if (this.showDeleteConfirm()) {
+      this.cancelDelete();
+    }
   }
 
   protected async confirmDelete(): Promise<void> {
