@@ -1,0 +1,163 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: var(--color-primary);
+}
+
+.create-survey {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  color: var(--color-text-on-dark);
+  font-family: var(--font-body);
+}
+
+.create-survey__header {
+  margin-bottom: var(--space-6);
+}
+
+.create-survey__back {
+  display: inline-block;
+  color: var(--color-accent);
+  text-decoration: none;
+  font-size: 1rem;
+  margin-bottom: var(--space-3);
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}
+
+.create-survey__title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--color-accent);
+  margin: 0;
+  line-height: 1;
+}
+
+.create-survey__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.create-survey__field,
+.create-survey__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.create-survey__label {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.create-survey__input {
+  background: var(--color-bg-light);
+  color: var(--color-text-on-light);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  border: 0;
+  border-radius: var(--radius-button) var(--radius-pill-lg) var(--radius-button) var(--radius-button);
+  padding: 7px var(--space-3);
+  height: 37px;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+.create-survey__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.create-survey__option-letter {
+  font-weight: 700;
+  font-size: 1.125rem;
+  width: 1.5rem;
+}
+
+.create-survey__remove {
+  background: transparent;
+  color: var(--color-text-on-dark);
+  border: 0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sharp);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--overlay-orange-hover);
+  }
+}
+
+.create-survey__add {
+  background: transparent;
+  color: var(--color-text-on-dark);
+  border: 0;
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-cta);
+  align-self: flex-start;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--overlay-orange-default);
+  }
+}
+
+.create-survey__hint {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.create-survey__error {
+  background: var(--color-tint-orange);
+  color: var(--color-text-on-light);
+  padding: var(--space-3);
+  border-radius: var(--radius-button);
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.create-survey__submit {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1.125rem;
+  border: 0;
+  border-radius: var(--radius-cta);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  align-self: center;
+  min-width: 200px;
+  transition: background 150ms ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: var(--color-accent-light);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

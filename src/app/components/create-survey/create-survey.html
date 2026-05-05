@@ -1,0 +1,64 @@
+<main class="create-survey">
+  <header class="create-survey__header">
+    <a routerLink="/" class="create-survey__back" aria-label="Back to home">← Back</a>
+    <h1 class="create-survey__title">New Survey</h1>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="create-survey__form" novalidate>
+    <label class="create-survey__field">
+      <span class="create-survey__label">Question</span>
+      <input
+        type="text"
+        formControlName="question"
+        class="create-survey__input"
+        placeholder="What do you want to ask?"
+      />
+    </label>
+
+    <fieldset class="create-survey__options" formArrayName="options">
+      <legend class="create-survey__label">Answers</legend>
+
+      @for (option of options.controls; track $index) {
+        <div class="create-survey__option">
+          <span class="create-survey__option-letter">{{ letterFor($index) }}.</span>
+          <input
+            type="text"
+            [formControlName]="$index"
+            class="create-survey__input"
+            [attr.placeholder]="'Option ' + ($index + 1)"
+          />
+          @if (options.length > 2) {
+            <button
+              type="button"
+              (click)="removeOption($index)"
+              class="create-survey__remove"
+              [attr.aria-label]="'Remove option ' + ($index + 1)"
+            >×</button>
+          }
+        </div>
+      }
+
+      @if (options.length < 6) {
+        <button type="button" (click)="addOption()" class="create-survey__add">
+          + Add answer
+        </button>
+      }
+
+      @if (options.length >= 6) {
+        <p class="create-survey__hint">You can add up to 6 answer fields.</p>
+      }
+    </fieldset>
+
+    @if (error()) {
+      <p class="create-survey__error" role="alert">{{ error() }}</p>
+    }
+
+    <button
+      type="submit"
+      class="create-survey__submit"
+      [disabled]="form.invalid || submitting()"
+    >
+      {{ submitting() ? 'Saving...' : 'Create poll' }}
+    </button>
+  </form>
+</main>

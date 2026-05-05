@@ -26,8 +26,26 @@
 
 .home__subtitle {
   font-size: 1rem;
-  margin: 0;
+  margin: 0 0 var(--space-4);
   opacity: 0.8;
+}
+
+.home__cta {
+  display: inline-block;
+  background: var(--color-accent-light);
+  color: var(--color-text-on-accent);
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-decoration: none;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-cta);
+  transition: background 150ms ease;
+}
+
+.home__cta:hover,
+.home__cta:focus-visible {
+  background: var(--color-accent);
 }
 
 .home__list {

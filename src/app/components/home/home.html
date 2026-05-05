@@ -2,6 +2,7 @@
   <header class="home__header">
     <h1 class="home__title">Poll App</h1>
     <p class="home__subtitle">What do you want to know today?</p>
+    <a routerLink="/create" class="home__cta">+ New Survey</a>
   </header>
 
   <section class="home__list" aria-label="Polls">
@@ -13,7 +14,7 @@
       @for (poll of polls(); track poll.id) {
         <app-poll-card [poll]="poll" />
       } @empty {
-        <p class="home__status">Noch keine Umfragen — leg die erste an.</p>
+        <p class="home__status">No polls yet. Create the first one.</p>
       }
     }
   </section>

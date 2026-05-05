@@ -38,6 +38,24 @@ export class PollService {
 
     this.loading.set(false);
   }
+
+  /** Inserts a new poll and refreshes the store on success. */
+  async create(question: string, optionLabels: string[]): Promise<boolean> {
+    this.error.set(null);
+
+    const options = optionLabels.map((label) => ({ label, votes: 0 }));
+    const { error } = await this.supabase.client
+      .from('polls')
+      .insert({ question, options });
+
+    if (error) {
+      this.error.set(error.message);
+      return false;
+    }
+
+    await this.loadAll();
+    return true;
+  }
 }
 
 function toPoll(row: PollRow): Poll {
