@@ -5,7 +5,7 @@ import { PollResults } from '../poll-results/poll-results';
 
 const VOTED_KEY_PREFIX = 'voted-';
 
-/** Single poll detail view with vote, live results and delete. */
+/** Single poll detail view with multi-question vote, live results and delete. */
 @Component({
   selector: 'app-poll-detail',
   imports: [RouterLink, PollResults],
@@ -23,10 +23,28 @@ export class PollDetail implements OnInit {
   );
   protected readonly initialLoadDone = signal(false);
   protected readonly hasVoted = signal(false);
-  protected readonly selectedOption = signal<number | null>(null);
+  protected readonly selectedAnswers = signal<Record<string, string[]>>({});
   protected readonly submitting = signal(false);
   protected readonly showDeleteConfirm = signal(false);
   protected readonly error = this.pollService.error;
+
+  protected readonly canSubmit = computed(() => {
+    const poll = this.poll();
+    if (!poll) return false;
+    const selections = this.selectedAnswers();
+    return poll.questions.every((q) => (selections[q.id] ?? []).length > 0);
+  });
+
+  protected readonly createdLabel = computed(() => formatDate(this.poll()?.createdAt));
+
+  protected readonly totalVotes = computed(() => {
+    const poll = this.poll();
+    if (!poll) return 0;
+    return poll.questions.reduce(
+      (sum, q) => sum + q.answers.reduce((s, a) => s + a.votes, 0),
+      0,
+    );
+  });
 
   constructor() {
     effect(() => {
@@ -46,21 +64,34 @@ export class PollDetail implements OnInit {
     this.initialLoadDone.set(true);
   }
 
-  protected select(index: number): void {
+  protected toggleAnswer(questionId: string, answerId: string, allowMultiple: boolean): void {
     if (this.hasVoted()) return;
-    this.selectedOption.set(index);
+
+    const current = this.selectedAnswers();
+    const list = current[questionId] ?? [];
+    const next = allowMultiple
+      ? list.includes(answerId)
+        ? list.filter((id) => id !== answerId)
+        : [...list, answerId]
+      : [answerId];
+
+    this.selectedAnswers.set({ ...current, [questionId]: next });
+  }
+
+  protected isSelected(questionId: string, answerId: string): boolean {
+    return (this.selectedAnswers()[questionId] ?? []).includes(answerId);
   }
 
   protected async submitVote(): Promise<void> {
-    const index = this.selectedOption();
-    if (index === null || this.hasVoted()) return;
+    if (!this.canSubmit() || this.hasVoted()) return;
 
     this.submitting.set(true);
-    const success = await this.pollService.vote(this.id(), index);
+    const allAnswerIds = Object.values(this.selectedAnswers()).flat();
+    const success = await this.pollService.vote(allAnswerIds);
     this.submitting.set(false);
 
     if (success) {
-      localStorage.setItem(VOTED_KEY_PREFIX + this.id(), String(index));
+      localStorage.setItem(VOTED_KEY_PREFIX + this.id(), JSON.stringify(allAnswerIds));
       this.hasVoted.set(true);
     }
   }
@@ -93,4 +124,12 @@ export class PollDetail implements OnInit {
   protected letterFor(index: number): string {
     return String.fromCharCode('A'.charCodeAt(0) + index);
   }
+}
+
+function formatDate(iso: string | undefined): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  return `${day}.${month}.${d.getFullYear()}`;
 }

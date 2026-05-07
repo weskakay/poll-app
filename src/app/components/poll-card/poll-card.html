@@ -1,4 +1,16 @@
-<a [routerLink]="['/poll', poll().id]" class="poll-card">
-  <h2 class="poll-card__question">{{ poll().question }}</h2>
-  <span class="poll-card__meta">{{ poll().options.length }} options</span>
+<a
+  [routerLink]="['/poll', poll().id]"
+  class="poll-card"
+  [class.poll-card--highlight]="variant() === 'highlight'"
+  [class.poll-card--list]="variant() === 'list'"
+>
+  @if (poll().category) {
+    <span class="poll-card__category">{{ poll().category }}</span>
+  }
+  <h2 class="poll-card__question">{{ poll().title }}</h2>
+  @if (endsInLabel()) {
+    <div class="poll-card__meta">
+      <span class="poll-card__ends">{{ endsInLabel() }}</span>
+    </div>
+  }
 </a>

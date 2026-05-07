@@ -5,28 +5,19 @@
 }
 
 .create-survey {
-  max-width: 600px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-5) var(--space-4);
   color: var(--color-text-on-dark);
   font-family: var(--font-body);
 }
 
 .create-survey__header {
-  margin-bottom: var(--space-6);
-}
-
-.create-survey__back {
-  display: inline-block;
-  color: var(--color-accent);
-  text-decoration: none;
-  font-size: 1rem;
-  margin-bottom: var(--space-3);
-
-  &:hover,
-  &:focus-visible {
-    text-decoration: underline;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
 }
 
 .create-survey__title {
@@ -37,14 +28,33 @@
   line-height: 1;
 }
 
+.create-survey__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sharp);
+  background: transparent;
+  color: var(--color-text-on-dark);
+  text-decoration: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: background 150ms ease;
+}
+
+.create-survey__close:hover,
+.create-survey__close:focus-visible {
+  background: var(--overlay-orange-hover);
+}
+
 .create-survey__form {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
 }
 
-.create-survey__field,
-.create-survey__options {
+.create-survey__field {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -53,9 +63,21 @@
   margin: 0;
 }
 
+.create-survey__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 600px) {
+  .create-survey__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .create-survey__label {
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
 .create-survey__input {
@@ -69,11 +91,18 @@
   height: 37px;
   width: 100%;
   box-sizing: border-box;
+}
 
-  &:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
+.create-survey__input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.create-survey__input--textarea {
+  height: auto;
+  min-height: 84px;
+  resize: vertical;
+  padding: var(--space-2) var(--space-3);
 }
 
 .create-survey__input--invalid {
@@ -89,37 +118,98 @@
   font-weight: 700;
 }
 
-.create-survey__option-row {
+.create-survey__questions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-4);
 }
 
-.create-survey__option {
+.create-survey__question {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 0;
+  margin: 0;
+  background: var(--overlay-list-card);
+  border-radius: var(--radius-button) var(--radius-card) var(--radius-button) var(--radius-button);
+}
+
+.create-survey__question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.create-survey__question-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--color-text-on-dark);
+  padding: 0;
+}
+
+.create-survey__answers-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.create-survey__multi {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.create-survey__multi input[type='checkbox'] {
+  accent-color: var(--color-accent);
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.create-survey__answers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.create-survey__answer-row {
   display: flex;
   align-items: center;
   gap: var(--space-2);
 }
 
-.create-survey__option-letter {
+.create-survey__answer-letter {
   font-weight: 700;
   font-size: 1.125rem;
   width: 1.5rem;
+  flex-shrink: 0;
 }
 
-.create-survey__remove {
+.create-survey__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
   background: transparent;
   color: var(--color-text-on-dark);
-  border: 0;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  line-height: 1;
   cursor: pointer;
-  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sharp);
+  flex-shrink: 0;
+  transition: background 150ms ease;
+}
 
-  &:hover,
-  &:focus-visible {
-    background: var(--overlay-orange-hover);
-  }
+.create-survey__chip:hover,
+.create-survey__chip:focus-visible {
+  background: var(--overlay-orange-hover);
 }
 
 .create-survey__add {
@@ -134,11 +224,31 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-cta);
   align-self: flex-start;
+  transition: background 150ms ease;
+}
 
-  &:hover,
-  &:focus-visible {
-    background: var(--overlay-orange-default);
-  }
+.create-survey__add:hover,
+.create-survey__add:focus-visible {
+  background: var(--overlay-orange-default);
+}
+
+.create-survey__add-question {
+  background: var(--overlay-orange-default);
+  color: var(--color-text-on-dark);
+  border: 0;
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-cta);
+  align-self: center;
+  transition: background 150ms ease;
+}
+
+.create-survey__add-question:hover,
+.create-survey__add-question:focus-visible {
+  background: var(--overlay-orange-hover);
 }
 
 .create-survey__hint {
@@ -166,17 +276,17 @@
   border-radius: var(--radius-cta);
   padding: var(--space-3) var(--space-4);
   cursor: pointer;
-  align-self: center;
-  min-width: 200px;
+  align-self: flex-end;
+  min-width: 160px;
   transition: background 150ms ease;
+}
 
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    background: var(--color-accent-light);
-  }
+.create-survey__submit:hover:not(:disabled),
+.create-survey__submit:focus-visible:not(:disabled) {
+  background: var(--color-accent-light);
+}
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+.create-survey__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

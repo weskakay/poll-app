@@ -4,53 +4,99 @@
   </main>
 } @else {
   <main class="poll-detail">
-    <header class="poll-detail__header">
-      <a routerLink="/" class="poll-detail__back" aria-label="Back to home">← Back</a>
+    <header class="poll-detail__topbar">
+      <span class="poll-detail__status-pill" [attr.data-status]="poll()!.status">
+        {{ poll()!.status === 'published' ? 'Published' : 'Draft' }}
+      </span>
+      <a routerLink="/" class="poll-detail__back">← Back</a>
+      <span class="poll-detail__meta-date">{{ createdLabel() }}</span>
+      @if (poll()!.category) {
+        <span class="poll-detail__meta-category">Category: {{ poll()!.category }}</span>
+      }
+      <a routerLink="/create" class="poll-detail__create-cta">Create survey</a>
       <button
         type="button"
         (click)="requestDelete()"
         class="poll-detail__delete"
-      >
-        Delete
-      </button>
+      >Delete</button>
     </header>
 
-    <h1 class="poll-detail__question">{{ poll()!.question }}</h1>
-
-    @if (!hasVoted()) {
-      <fieldset class="poll-detail__options">
-        <legend class="poll-detail__legend">Choose one</legend>
-        @for (option of poll()!.options; track $index) {
-          <label class="poll-detail__option">
-            <input
-              type="radio"
-              name="vote"
-              [value]="$index"
-              (change)="select($index)"
-              class="poll-detail__radio"
-            />
-            <span class="poll-detail__option-letter">{{ letterFor($index) }}.</span>
-            <span class="poll-detail__option-label">{{ option.label }}</span>
-          </label>
-        }
-      </fieldset>
-
-      @if (error()) {
-        <p class="poll-detail__error" role="alert">{{ error() }}</p>
-      }
-
-      <button
-        type="button"
-        (click)="submitVote()"
-        class="poll-detail__submit"
-        [disabled]="selectedOption() === null || submitting()"
-      >
-        {{ submitting() ? 'Voting...' : 'Submit vote' }}
-      </button>
-    } @else {
-      <app-poll-results [poll]="poll()!" />
-      <p class="poll-detail__voted">Thanks for voting.</p>
+    <h1 class="poll-detail__title">{{ poll()!.title }}</h1>
+    @if (poll()!.description) {
+      <p class="poll-detail__description">{{ poll()!.description }}</p>
     }
+
+    <div class="poll-detail__layout">
+      <section class="poll-detail__questions">
+        @for (question of poll()!.questions; track question.id; let qIndex = $index) {
+          <fieldset class="poll-detail__question">
+            <legend class="poll-detail__question-title">
+              {{ qIndex + 1 }}. {{ question.text }}
+            </legend>
+            @if (question.allowMultiple) {
+              <p class="poll-detail__hint">You can choose more than one answer.</p>
+            }
+
+            <div class="poll-detail__answers">
+              @for (answer of question.answers; track answer.id; let aIndex = $index) {
+                <label
+                  class="poll-detail__answer"
+                  [class.poll-detail__answer--selected]="isSelected(question.id, answer.id)"
+                  [class.poll-detail__answer--disabled]="hasVoted()"
+                >
+                  <input
+                    [type]="question.allowMultiple ? 'checkbox' : 'radio'"
+                    [name]="'q-' + question.id"
+                    [checked]="isSelected(question.id, answer.id)"
+                    [disabled]="hasVoted()"
+                    (change)="toggleAnswer(question.id, answer.id, question.allowMultiple)"
+                    class="poll-detail__choice"
+                  />
+                  <span class="poll-detail__answer-letter">{{ letterFor(aIndex) }}.</span>
+                  <span class="poll-detail__answer-label">{{ answer.label }}</span>
+                </label>
+              }
+            </div>
+          </fieldset>
+        }
+
+        @if (!hasVoted()) {
+          @if (error()) {
+            <p class="poll-detail__error" role="alert">{{ error() }}</p>
+          }
+          <button
+            type="button"
+            (click)="submitVote()"
+            class="poll-detail__submit"
+            [disabled]="!canSubmit() || submitting()"
+          >
+            {{ submitting() ? 'Submitting...' : 'Complete' }}
+          </button>
+        } @else {
+          <p class="poll-detail__voted">Thanks for voting.</p>
+        }
+      </section>
+
+      <aside class="poll-detail__results">
+        <h2 class="poll-detail__results-header">
+          Survey results <span class="poll-detail__live">LIVE</span>
+        </h2>
+        @if (totalVotes() === 0) {
+          <p class="poll-detail__results-empty">
+            There are no answers from the participants here for the survey.
+          </p>
+        } @else {
+          @for (question of poll()!.questions; track question.id; let qIndex = $index) {
+            <div class="poll-detail__results-block">
+              <h3 class="poll-detail__results-question">
+                {{ qIndex + 1 }}. {{ question.text }}
+              </h3>
+              <app-poll-results [question]="question" />
+            </div>
+          }
+        }
+      </aside>
+    </div>
   </main>
 
   @if (showDeleteConfirm()) {
