@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { PollService } from '../../services/poll.service';
 import { POLL_CATEGORIES, type PollCategory } from '../../interfaces/poll.interface';
@@ -13,7 +13,6 @@ type QuestionGroup = FormGroup<{
 }>;
 
 const MAX_ANSWERS = 6;
-const MIN_ANSWERS = 2;
 
 /** Reactive form to create a poll with one or more questions, each with two to six answers. */
 @Component({
@@ -42,40 +41,59 @@ export class CreateSurvey {
     questions: this.formBuilder.nonNullable.array<QuestionGroup>([this.createQuestion()]),
   });
 
+  /** Form array holding the question groups of the current poll. */
   protected get questions(): FormArray<QuestionGroup> {
     return this.form.controls.questions;
   }
 
+  /** Returns the answer controls for the given question group. */
   protected answersOf(question: QuestionGroup): FormArray<AnswerControl> {
     return question.controls.answers;
   }
 
+  /** Maps a zero-based index to its answer letter (A, B, C, ...). */
   protected letterFor(index: number): string {
     return String.fromCharCode('A'.charCodeAt(0) + index);
   }
 
+  /** Appends an empty question group with two empty answers. */
   protected addQuestion(): void {
     this.questions.push(this.createQuestion());
   }
 
+  /** Removes a question group while always keeping at least one. */
   protected removeQuestion(index: number): void {
     if (this.questions.length > 1) {
       this.questions.removeAt(index);
     }
   }
 
+  /** Clears all input values of a question without removing it from the form. */
+  protected clearQuestionInputs(index: number): void {
+    const question = this.questions.at(index);
+    question.controls.text.reset('');
+    question.controls.allowMultiple.reset(false);
+    this.answersOf(question).controls.forEach((control) => control.reset(''));
+  }
+
+  /** Adds an empty answer control until the maximum count is reached. */
   protected addAnswer(question: QuestionGroup): void {
     if (this.answersOf(question).length < MAX_ANSWERS) {
       this.answersOf(question).push(this.createAnswer());
     }
   }
 
+  /** Removes the answer row at the given index. Only used for additional answers (index 2+). */
   protected removeAnswer(question: QuestionGroup, index: number): void {
-    if (this.answersOf(question).length > MIN_ANSWERS) {
-      this.answersOf(question).removeAt(index);
-    }
+    this.answersOf(question).removeAt(index);
   }
 
+  /** Resets the value of any reactive form control to an empty string. */
+  protected clearControl(control: AbstractControl): void {
+    control.reset('');
+  }
+
+  /** Validates the form and creates the poll, then notifies and navigates back to home on success. */
   protected async submit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -84,7 +102,7 @@ export class CreateSurvey {
 
     this.submitting.set(true);
     const value = this.form.getRawValue();
-    const success = await this.pollService.create({
+    const newPollId = await this.pollService.create({
       title: value.title,
       description: value.description.trim() ? value.description : null,
       category: value.category,
@@ -98,7 +116,8 @@ export class CreateSurvey {
     });
     this.submitting.set(false);
 
-    if (success) {
+    if (newPollId) {
+      this.pollService.publishedMessage.set('Your survey is now published');
       this.router.navigate(['/']);
     }
   }

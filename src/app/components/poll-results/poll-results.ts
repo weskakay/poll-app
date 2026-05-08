@@ -17,6 +17,7 @@ interface AnswerResult {
 export class PollResults {
   readonly question = input.required<PollQuestion>();
 
+  /** Per-answer view model with its letter, label, vote count and percentage share. */
   protected readonly results = computed<AnswerResult[]>(() => {
     const answers = this.question().answers;
     const total = answers.reduce((sum, answer) => sum + answer.votes, 0);

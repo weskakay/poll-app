@@ -1,5 +1,5 @@
 .app-header {
-  background: var(--color-primary);
+  background: transparent;
 }
 
 .app-header__inner {
@@ -8,6 +8,8 @@
   padding: var(--space-4) var(--space-4) 0;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 
 .app-header__logo {
@@ -31,4 +33,113 @@
   .app-header__logo-img {
     height: 44px;
   }
+}
+
+.app-header__cta {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-accent-light);
+  color: var(--color-text-on-accent);
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-decoration: none;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-cta);
+  transition: background 150ms ease;
+}
+
+.app-header__cta:hover,
+.app-header__cta:focus-visible {
+  background: var(--color-accent);
+}
+
+.app-header__cta-icon-slot {
+  position: relative;
+  width: 0;
+  height: 24px;
+  margin-left: 0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 250ms ease, margin-left 250ms ease;
+}
+
+.app-header__cta-icon {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+@media (hover: hover) and (min-width: 600px) {
+  .app-header__cta:hover .app-header__cta-icon-slot,
+  .app-header__cta:focus-visible .app-header__cta-icon-slot {
+    width: 24px;
+    margin-left: var(--space-3);
+  }
+
+  .app-header__cta:hover .app-header__cta-icon,
+  .app-header__cta:focus-visible .app-header__cta-icon {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 599px) {
+  .app-header__cta-icon-slot {
+    width: 24px;
+    margin-left: var(--space-3);
+  }
+
+  .app-header__cta-icon {
+    opacity: 1;
+  }
+}
+
+.published-toast {
+  position: fixed;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--color-tint-orange);
+  color: var(--color-text-on-light);
+  border-radius: var(--radius-cta) var(--radius-card) var(--radius-cta) var(--radius-cta);
+  padding: var(--space-4) var(--space-5);
+  max-width: 360px;
+  z-index: 100;
+}
+
+.published-toast__title {
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  margin: 0;
+  flex: 1;
+}
+
+.published-toast__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-on-light);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: var(--radius-sharp);
+  flex-shrink: 0;
+  transition: background 150ms ease;
+}
+
+.published-toast__close:hover,
+.published-toast__close:focus-visible {
+  background: var(--overlay-orange-default);
 }

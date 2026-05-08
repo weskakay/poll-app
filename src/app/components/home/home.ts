@@ -25,6 +25,7 @@ export class Home implements OnInit {
   protected readonly categoryFilter = signal<PollCategory | 'all'>('all');
   protected readonly dropdownOpen = signal(false);
 
+  /** Up to three published polls with the closest upcoming end date. */
   protected readonly endingSoon = computed<Poll[]>(() =>
     this.pollService
       .polls()
@@ -33,6 +34,7 @@ export class Home implements OnInit {
       .slice(0, 3),
   );
 
+  /** Published polls that match the current status and category filters. */
   protected readonly visiblePolls = computed<Poll[]>(() => {
     const status = this.status();
     const cat = this.categoryFilter();
@@ -50,15 +52,18 @@ export class Home implements OnInit {
     this.pollService.subscribe();
   }
 
+  /** Opens or closes the category dropdown. */
   protected toggleDropdown(): void {
     this.dropdownOpen.update((open) => !open);
   }
 
+  /** Picks a category filter and closes the dropdown. */
   protected selectCategory(category: PollCategory | 'all'): void {
     this.categoryFilter.set(category);
     this.dropdownOpen.set(false);
   }
 
+  /** Closes the dropdown when the user clicks outside the host element. */
   @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: MouseEvent): void {
     if (!this.dropdownOpen()) return;
@@ -68,6 +73,7 @@ export class Home implements OnInit {
     }
   }
 
+  /** Closes the dropdown when the user presses escape. */
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
     this.dropdownOpen.set(false);

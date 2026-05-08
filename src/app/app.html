@@ -1,9 +1,51 @@
 <header class="app-header">
   <div class="app-header__inner">
     <a routerLink="/" class="app-header__logo" aria-label="Poll App home">
-      <img src="assets/logo.svg" alt="Poll App" class="app-header__logo-img" />
+      <img
+        [src]="lightTheme() ? 'assets/logo-on-light.svg' : 'assets/logo.svg'"
+        alt="Poll App"
+        class="app-header__logo-img"
+      />
     </a>
+    @if (showCreateCta()) {
+      <a routerLink="/create" class="app-header__cta">
+        <span>New survey</span>
+        <span class="app-header__cta-icon-slot" aria-hidden="true">
+          <svg
+            class="app-header__cta-icon"
+            width="24"
+            height="24"
+            viewBox="132 12 24 24"
+            fill="none"
+          >
+            <path
+              d="M143 25V28C143 28.2833 143.096 28.5208 143.288 28.7125C143.479 28.9042 143.717 29 144 29C144.283 29 144.521 28.9042 144.713 28.7125C144.904 28.5208 145 28.2833 145 28V25H148C148.283 25 148.521 24.9042 148.713 24.7125C148.904 24.5208 149 24.2833 149 24C149 23.7167 148.904 23.4792 148.713 23.2875C148.521 23.0958 148.283 23 148 23H145V20C145 19.7167 144.904 19.4792 144.713 19.2875C144.521 19.0958 144.283 19 144 19C143.717 19 143.479 19.0958 143.288 19.2875C143.096 19.4792 143 19.7167 143 20V23H140C139.717 23 139.479 23.0958 139.287 23.2875C139.096 23.4792 139 23.7167 139 24C139 24.2833 139.096 24.5208 139.287 24.7125C139.479 24.9042 139.717 25 140 25H143ZM144 34C142.617 34 141.317 33.7375 140.1 33.2125C138.883 32.6875 137.825 31.975 136.925 31.075C136.025 30.175 135.312 29.1167 134.788 27.9C134.262 26.6833 134 25.3833 134 24C134 22.6167 134.262 21.3167 134.788 20.1C135.312 18.8833 136.025 17.825 136.925 16.925C137.825 16.025 138.883 15.3125 140.1 14.7875C141.317 14.2625 142.617 14 144 14C145.383 14 146.683 14.2625 147.9 14.7875C149.117 15.3125 150.175 16.025 151.075 16.925C151.975 17.825 152.688 18.8833 153.212 20.1C153.737 21.3167 154 22.6167 154 24C154 25.3833 153.737 26.6833 153.212 27.9C152.688 29.1167 151.975 30.175 151.075 31.075C150.175 31.975 149.117 32.6875 147.9 33.2125C146.683 33.7375 145.383 34 144 34ZM144 32C146.233 32 148.125 31.225 149.675 29.675C151.225 28.125 152 26.2333 152 24C152 21.7667 151.225 19.875 149.675 18.325C148.125 16.775 146.233 16 144 16C141.767 16 139.875 16.775 138.325 18.325C136.775 19.875 136 21.7667 136 24C136 26.2333 136.775 28.125 138.325 29.675C139.875 31.225 141.767 32 144 32Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </a>
+    }
   </div>
 </header>
 
 <router-outlet />
+
+@if (publishedMessage()) {
+  <div
+    class="published-toast"
+    role="status"
+    aria-live="polite"
+    aria-labelledby="published-toast-title"
+  >
+    <h2 id="published-toast-title" class="published-toast__title">
+      {{ publishedMessage() }}
+    </h2>
+    <button
+      type="button"
+      class="published-toast__close"
+      (click)="dismissPublishedMessage()"
+      aria-label="Dismiss notification"
+    >×</button>
+  </div>
+}

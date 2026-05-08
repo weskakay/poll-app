@@ -104,20 +104,26 @@
             <ul class="home__sort-menu" role="listbox">
               <li
                 role="option"
+                tabindex="0"
                 class="home__sort-option"
                 [class.home__sort-option--selected]="categoryFilter() === 'all'"
                 [attr.aria-selected]="categoryFilter() === 'all'"
                 (click)="selectCategory('all')"
+                (keydown.enter)="selectCategory('all')"
+                (keydown.space)="selectCategory('all'); $event.preventDefault()"
               >
                 All categories
               </li>
               @for (category of categories; track category) {
                 <li
                   role="option"
+                  tabindex="0"
                   class="home__sort-option"
                   [class.home__sort-option--selected]="categoryFilter() === category"
                   [attr.aria-selected]="categoryFilter() === category"
                   (click)="selectCategory(category)"
+                  (keydown.enter)="selectCategory(category)"
+                  (keydown.space)="selectCategory(category); $event.preventDefault()"
                 >
                   {{ category }}
                 </li>

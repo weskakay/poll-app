@@ -69,6 +69,10 @@
   opacity: 0.8;
 }
 
+.poll-card--list .poll-card__meta {
+  justify-content: flex-end;
+}
+
 .poll-card__ends {
   background: var(--color-accent-light);
   color: var(--color-text-on-accent);

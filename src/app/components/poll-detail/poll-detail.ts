@@ -1,4 +1,5 @@
-import { Component, computed, effect, HostListener, inject, OnInit, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, computed, effect, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PollService } from '../../services/poll.service';
 import { PollResults } from '../poll-results/poll-results';
@@ -12,10 +13,11 @@ const VOTED_KEY_PREFIX = 'voted-';
   templateUrl: './poll-detail.html',
   styleUrl: './poll-detail.scss',
 })
-export class PollDetail implements OnInit {
+export class PollDetail implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly pollService = inject(PollService);
+  private readonly document = inject(DOCUMENT);
 
   protected readonly id = signal('');
   protected readonly poll = computed(() =>
@@ -28,6 +30,7 @@ export class PollDetail implements OnInit {
   protected readonly showDeleteConfirm = signal(false);
   protected readonly error = this.pollService.error;
 
+  /** True when every question has at least one selected answer. */
   protected readonly canSubmit = computed(() => {
     const poll = this.poll();
     if (!poll) return false;
@@ -35,8 +38,10 @@ export class PollDetail implements OnInit {
     return poll.questions.every((q) => (selections[q.id] ?? []).length > 0);
   });
 
+  /** Formatted creation date of the current poll, empty string while loading. */
   protected readonly createdLabel = computed(() => formatDate(this.poll()?.createdAt));
 
+  /** Total number of votes across all questions and answers of the current poll. */
   protected readonly totalVotes = computed(() => {
     const poll = this.poll();
     if (!poll) return 0;
@@ -55,6 +60,8 @@ export class PollDetail implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.document.body.classList.add('theme-light');
+
     const idParam = this.route.snapshot.paramMap.get('id') ?? '';
     this.id.set(idParam);
     this.hasVoted.set(localStorage.getItem(VOTED_KEY_PREFIX + idParam) !== null);
@@ -64,24 +71,27 @@ export class PollDetail implements OnInit {
     this.initialLoadDone.set(true);
   }
 
+  ngOnDestroy(): void {
+    this.document.body.classList.remove('theme-light');
+  }
+
+  /** Toggles an answer in the current selection, respecting single vs multiple mode. */
   protected toggleAnswer(questionId: string, answerId: string, allowMultiple: boolean): void {
     if (this.hasVoted()) return;
 
     const current = this.selectedAnswers();
     const list = current[questionId] ?? [];
-    const next = allowMultiple
-      ? list.includes(answerId)
-        ? list.filter((id) => id !== answerId)
-        : [...list, answerId]
-      : [answerId];
+    const next = computeNextSelection(list, answerId, allowMultiple);
 
     this.selectedAnswers.set({ ...current, [questionId]: next });
   }
 
+  /** Returns true when the answer is part of the current selection. */
   protected isSelected(questionId: string, answerId: string): boolean {
     return (this.selectedAnswers()[questionId] ?? []).includes(answerId);
   }
 
+  /** Submits the vote, locks the form on success and stores the local voted flag. */
   protected async submitVote(): Promise<void> {
     if (!this.canSubmit() || this.hasVoted()) return;
 
@@ -96,14 +106,17 @@ export class PollDetail implements OnInit {
     }
   }
 
+  /** Opens the delete confirmation dialog. */
   protected requestDelete(): void {
     this.showDeleteConfirm.set(true);
   }
 
+  /** Closes the delete confirmation dialog without deleting. */
   protected cancelDelete(): void {
     this.showDeleteConfirm.set(false);
   }
 
+  /** Closes the delete dialog when the user presses escape. */
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
     if (this.showDeleteConfirm()) {
@@ -111,6 +124,7 @@ export class PollDetail implements OnInit {
     }
   }
 
+  /** Deletes the poll, clears the voted flag and navigates back to home. */
   protected async confirmDelete(): Promise<void> {
     this.showDeleteConfirm.set(false);
 
@@ -121,9 +135,24 @@ export class PollDetail implements OnInit {
     }
   }
 
+  /** Maps a zero-based index to its answer letter (A, B, C, ...). */
   protected letterFor(index: number): string {
     return String.fromCharCode('A'.charCodeAt(0) + index);
   }
+}
+
+function computeNextSelection(
+  current: string[],
+  answerId: string,
+  allowMultiple: boolean,
+): string[] {
+  if (!allowMultiple) {
+    return [answerId];
+  }
+  if (current.includes(answerId)) {
+    return current.filter((id) => id !== answerId);
+  }
+  return [...current, answerId];
 }
 
 function formatDate(iso: string | undefined): string {

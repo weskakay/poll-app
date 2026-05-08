@@ -1,32 +1,30 @@
 :host {
   display: block;
   min-height: 100dvh;
-  background: var(--color-primary);
+  color: var(--color-text-on-light);
 }
 
 .poll-detail {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-5) var(--space-4);
-  color: var(--color-text-on-dark);
+  padding: var(--space-4) var(--space-4) var(--space-6);
   font-family: var(--font-body);
 }
 
 .poll-detail__topbar {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-3) 0;
-  margin-bottom: var(--space-3);
-  border-bottom: 1px solid var(--overlay-list-card);
 }
 
 .poll-detail__back {
-  color: var(--color-accent);
+  color: var(--color-accent-strong);
   text-decoration: none;
   font-size: 1rem;
   font-weight: 700;
+  font-family: var(--font-button);
 }
 
 .poll-detail__back:hover,
@@ -34,105 +32,120 @@
   text-decoration: underline;
 }
 
-.poll-detail__meta-date {
-  font-size: 0.875rem;
-  opacity: 0.85;
-}
-
-.poll-detail__meta-category {
-  font-size: 0.875rem;
-  color: var(--color-accent-light);
-  font-weight: 500;
-}
-
-.poll-detail__status-pill {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.75rem;
-  color: var(--color-text-on-accent);
-  padding: 3px var(--space-2);
-  border-radius: 0 var(--radius-pill-sm) 0 0;
-  background: var(--color-accent);
-}
-
-.poll-detail__status-pill[data-status='draft'] {
-  background: var(--color-tint-orange);
-}
-
-.poll-detail__create-cta {
-  margin-left: auto;
-  display: inline-block;
-  background: var(--color-accent-light);
-  color: var(--color-text-on-accent);
-  font-family: var(--font-button);
-  font-weight: 700;
-  font-size: 0.875rem;
-  text-decoration: none;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-cta);
-  transition: background 150ms ease;
-}
-
-.poll-detail__create-cta:hover,
-.poll-detail__create-cta:focus-visible {
-  background: var(--color-accent);
-}
-
 .poll-detail__delete {
   background: transparent;
-  color: var(--color-text-on-dark);
-  border: 1px solid var(--color-text-on-dark);
+  color: var(--color-text-on-light);
+  border: 1px solid var(--color-text-on-light);
   font-family: var(--font-button);
   font-size: 0.875rem;
   cursor: pointer;
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-button);
-  transition: background 150ms ease;
+  transition: background 150ms ease, color 150ms ease;
 }
 
 .poll-detail__delete:hover,
 .poll-detail__delete:focus-visible {
-  background: var(--overlay-orange-hover);
-  border-color: var(--color-accent);
-}
-
-.poll-detail__title {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 6vw, 2.75rem);
-  color: var(--color-accent);
-  margin: 0 0 var(--space-3);
-  line-height: 1.1;
-}
-
-.poll-detail__description {
-  margin: 0 0 var(--space-5);
-  font-size: 1rem;
-  opacity: 0.85;
-  max-width: 720px;
+  background: var(--color-accent-strong);
+  border-color: var(--color-accent-strong);
+  color: var(--color-text-on-dark);
 }
 
 .poll-detail__layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-5);
+  align-items: end;
 }
 
 @media (min-width: 900px) {
   .poll-detail__layout {
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1.6fr 1fr;
+    gap: var(--space-6);
   }
 }
 
-.poll-detail__questions {
+.poll-detail__panel {
+  background: var(--overlay-panel);
+  color: var(--color-text-on-light);
+  border-radius: 0 160px 0 0;
+  padding: var(--space-6) var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
 
+@media (min-width: 900px) {
+  .poll-detail__panel {
+    padding: var(--space-6);
+  }
+}
+
+.poll-detail__status-pill {
+  align-self: flex-start;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text-on-accent);
+  padding: 3px var(--space-3);
+  border-radius: 0 var(--radius-pill-sm) 0 0;
+  background: var(--color-accent);
+}
+
+.poll-detail__status-pill[data-status='draft'] {
+  background: var(--color-accent-light);
+}
+
+.poll-detail__meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.poll-detail__meta-date {
+  color: var(--color-text-on-light);
+}
+
+.poll-detail__meta-category {
+  color: var(--color-text-on-accent);
+}
+
+.poll-detail__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  color: var(--color-accent-title);
+  margin: 0;
+  line-height: 1.05;
+}
+
+.poll-detail__description {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-on-light);
+  max-width: 720px;
+}
+
+.poll-detail__questions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  margin-top: var(--space-3);
+}
+
+@media (min-width: 700px) {
+  .poll-detail__questions {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-6);
+  }
+}
+
 .poll-detail__question {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
   border: 0;
   padding: 0;
   margin: 0;
@@ -141,35 +154,40 @@
 .poll-detail__question-title {
   font-weight: 700;
   font-size: 1.125rem;
+  line-height: 1.28;
+  color: var(--color-text-on-light);
   padding: 0;
-  margin-bottom: var(--space-1);
+  margin: 0;
 }
 
 .poll-detail__hint {
-  margin: 0;
+  margin: 3px 0 0 0;
+  padding-left: var(--space-5);
   font-size: 0.75rem;
-  opacity: 0.7;
+  line-height: 15px;
+  color: var(--color-text-on-light);
 }
 
 .poll-detail__answers {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
+  padding-left: var(--space-2);
+  margin-top: var(--space-5);
 }
 
 .poll-detail__answer {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-button);
+  gap: var(--space-4);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-sharp);
   cursor: pointer;
   transition: background 150ms ease;
 }
 
-.poll-detail__answer:hover,
-.poll-detail__answer--selected {
-  background: var(--overlay-orange-default);
+.poll-detail__answer:hover {
+  background: var(--overlay-row-hover);
 }
 
 .poll-detail__answer--disabled {
@@ -181,19 +199,69 @@
 }
 
 .poll-detail__choice {
-  accent-color: var(--color-accent);
-  width: 1.125rem;
-  height: 1.125rem;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.poll-detail__answer-box {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--color-text-on-light);
+  border-radius: 3px;
+  flex-shrink: 0;
+  position: relative;
+  background: transparent;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.poll-detail__answer--selected .poll-detail__answer-box {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.poll-detail__answer--selected .poll-detail__answer-box::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 8' fill='none'><path d='M1 4L3.7 6.7L9 1.3' stroke='%2335273A' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.poll-detail__choice:focus-visible + .poll-detail__answer-box {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.poll-detail__answer-text {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
 }
 
 .poll-detail__answer-letter {
   font-weight: 700;
-  width: 1.5rem;
+  font-size: 1rem;
   flex-shrink: 0;
 }
 
 .poll-detail__answer-label {
   flex: 1;
+  font-size: 1rem;
 }
 
 .poll-detail__error {
@@ -201,12 +269,18 @@
   color: var(--color-text-on-light);
   padding: var(--space-3);
   border-radius: var(--radius-button);
-  margin: 0 0 var(--space-3);
+  margin: 0;
   font-size: 0.875rem;
 }
 
+.poll-detail__panel-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
 .poll-detail__submit {
-  background: var(--color-accent);
+  background: var(--color-accent-light);
   color: var(--color-text-on-accent);
   font-family: var(--font-button);
   font-weight: 700;
@@ -215,26 +289,18 @@
   border-radius: var(--radius-cta);
   padding: var(--space-3) var(--space-4);
   cursor: pointer;
-  align-self: flex-end;
-  min-width: 160px;
+  min-width: 159px;
   transition: background 150ms ease;
 }
 
 .poll-detail__submit:hover:not(:disabled),
 .poll-detail__submit:focus-visible:not(:disabled) {
-  background: var(--color-accent-light);
+  background: var(--color-accent);
 }
 
 .poll-detail__submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.poll-detail__voted {
-  align-self: flex-end;
-  margin-top: var(--space-3);
-  font-size: 0.875rem;
-  opacity: 0.7;
 }
 
 .poll-detail__results {
@@ -245,8 +311,8 @@
 
 .poll-detail__results-header {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 5vw, 2rem);
-  color: var(--color-text-on-dark);
+  font-size: 2rem;
+  color: var(--color-text-on-accent);
   margin: 0;
   line-height: 1;
 }
@@ -258,27 +324,36 @@
 .poll-detail__results-block {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-5);
 }
 
 .poll-detail__results-question {
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 1.125rem;
+  line-height: 1.28;
+  color: var(--color-text-on-light);
   margin: 0;
-  opacity: 0.85;
+}
+
+.poll-detail__results-empty-intro {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text-on-light);
 }
 
 .poll-detail__results-empty {
-  margin: 0;
-  font-size: 0.875rem;
-  opacity: 0.7;
-  font-style: italic;
+  margin: clamp(3rem, 14vh, 9rem) 0 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text-on-light);
+  text-align: center;
 }
 
 .poll-detail__status {
   text-align: center;
-  opacity: 0.7;
   padding: var(--space-6);
+  color: var(--color-text-on-light);
 }
 
 .dialog-backdrop {

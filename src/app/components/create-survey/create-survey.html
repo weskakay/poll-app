@@ -1,140 +1,241 @@
 <main class="create-survey">
-  <header class="create-survey__header">
-    <h1 class="create-survey__title">Create new survey</h1>
-    <a routerLink="/" class="create-survey__close" aria-label="Close and return to home">×</a>
-  </header>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="create-survey__shell" novalidate>
+    <header class="create-survey__shell-header">
+      <div class="create-survey__title-block">
+        <span class="create-survey__draft">Draft</span>
+        <h1 class="create-survey__title">Create new survey</h1>
+      </div>
+      <a routerLink="/" class="create-survey__cancel" aria-label="Cancel and return to home">
+        <span>Cancel</span>
+        <span class="create-survey__cancel-icon" aria-hidden="true">×</span>
+      </a>
+    </header>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="create-survey__form" novalidate>
-    <label class="create-survey__field">
-      <span class="create-survey__label">Survey name</span>
-      <input
-        type="text"
-        formControlName="title"
-        class="create-survey__input"
-        [class.create-survey__input--invalid]="form.controls.title.invalid && form.controls.title.touched"
-        placeholder="Give your survey a clear title"
-      />
-      @if (form.controls.title.invalid && form.controls.title.touched) {
-        <span class="create-survey__field-error">Please enter a title.</span>
-      }
-    </label>
-
-    <div class="create-survey__row">
-      <label class="create-survey__field">
-        <span class="create-survey__label">Set end date (optional)</span>
-        <input
-          type="date"
-          formControlName="expiresAt"
-          class="create-survey__input"
-        />
-      </label>
-
-      <label class="create-survey__field">
-        <span class="create-survey__label">Choose category</span>
-        <select formControlName="category" class="create-survey__input">
-          @for (category of categories; track category) {
-            <option [value]="category">{{ category }}</option>
-          }
-        </select>
-      </label>
-    </div>
-
-    <label class="create-survey__field">
-      <span class="create-survey__label">Describing text (optional)</span>
-      <textarea
-        formControlName="description"
-        class="create-survey__input create-survey__input--textarea"
-        rows="3"
-        placeholder="Add context so people understand what this survey is about."
-      ></textarea>
-    </label>
-
-    <div class="create-survey__questions">
-      @for (question of questions.controls; track $index; let qIndex = $index) {
-        <fieldset class="create-survey__question" [formGroup]="question">
-          <header class="create-survey__question-header">
-            <legend class="create-survey__question-title">{{ qIndex + 1 }}. Question</legend>
-            @if (questions.length > 1) {
+    <div class="create-survey__inner">
+      <div class="create-survey__top">
+        <div class="create-survey__top-left">
+          <div class="create-survey__field">
+            <label class="create-survey__label" for="survey-name">Survey name</label>
+            <div class="create-survey__field-row">
+              <input
+                id="survey-name"
+                type="text"
+                formControlName="title"
+                class="create-survey__input"
+                [class.create-survey__input--invalid]="form.controls.title.invalid && form.controls.title.touched"
+                placeholder="Give your survey a clear title"
+              />
               <button
                 type="button"
-                class="create-survey__chip"
-                (click)="removeQuestion(qIndex)"
-                [attr.aria-label]="'Remove question ' + (qIndex + 1)"
-              >×</button>
+                class="create-survey__icon-button"
+                (click)="clearControl(form.controls.title)"
+                aria-label="Clear survey name"
+              >
+                <svg viewBox="0 0 18 20" width="18" height="20" aria-hidden="true">
+                  <path fill="currentColor" d="M3.25 19.5C2.65417 19.5 2.1441 19.2878 1.71979 18.8635C1.29549 18.4392 1.08333 17.9292 1.08333 17.3333V3.25C0.776389 3.25 0.519097 3.14618 0.311458 2.93854C0.103819 2.7309 0 2.47361 0 2.16667C0 1.85972 0.103819 1.60243 0.311458 1.39479C0.519097 1.18715 0.776389 1.08333 1.08333 1.08333H5.41667C5.41667 0.776389 5.52049 0.519097 5.72813 0.311458C5.93576 0.103819 6.19306 0 6.5 0H10.8333C11.1403 0 11.3976 0.103819 11.6052 0.311458C11.8128 0.519097 11.9167 0.776389 11.9167 1.08333H16.25C16.5569 1.08333 16.8142 1.18715 17.0219 1.39479C17.2295 1.60243 17.3333 1.85972 17.3333 2.16667C17.3333 2.47361 17.2295 2.7309 17.0219 2.93854C16.8142 3.14618 16.5569 3.25 16.25 3.25V17.3333C16.25 17.9292 16.0378 18.4392 15.6135 18.8635C15.1892 19.2878 14.6792 19.5 14.0833 19.5H3.25ZM14.0833 3.25H3.25V17.3333H14.0833V3.25ZM6.5 15.1667C6.80694 15.1667 7.06424 15.0628 7.27188 14.8552C7.47951 14.6476 7.58333 14.3903 7.58333 14.0833V6.5C7.58333 6.19306 7.47951 5.93576 7.27188 5.72813C7.06424 5.52049 6.80694 5.41667 6.5 5.41667C6.19306 5.41667 5.93576 5.52049 5.72813 5.72813C5.52049 5.93576 5.41667 6.19306 5.41667 6.5V14.0833C5.41667 14.3903 5.52049 14.6476 5.72813 14.8552C5.93576 15.0628 6.19306 15.1667 6.5 15.1667ZM10.8333 15.1667C11.1403 15.1667 11.3976 15.0628 11.6052 14.8552C11.8128 14.6476 11.9167 14.3903 11.9167 14.0833V6.5C11.9167 6.19306 11.8128 5.93576 11.6052 5.72813C11.3976 5.52049 11.1403 5.41667 10.8333 5.41667C10.5264 5.41667 10.2691 5.52049 10.0615 5.72813C9.85382 5.93576 9.75 6.19306 9.75 6.5V14.0833C9.75 14.3903 9.85382 14.6476 10.0615 14.8552C10.2691 15.0628 10.5264 15.1667 10.8333 15.1667Z"/>
+                </svg>
+              </button>
+            </div>
+            @if (form.controls.title.invalid && form.controls.title.touched) {
+              <span class="create-survey__field-error">Please enter a title.</span>
             }
-          </header>
-
-          <input
-            type="text"
-            formControlName="text"
-            class="create-survey__input"
-            [class.create-survey__input--invalid]="question.controls.text.invalid && question.controls.text.touched"
-            placeholder="What do you want to ask?"
-          />
-          @if (question.controls.text.invalid && question.controls.text.touched) {
-            <span class="create-survey__field-error">Please enter a question.</span>
-          }
-
-          <div class="create-survey__answers-header">
-            <span class="create-survey__label">Answers</span>
-            <label class="create-survey__multi">
-              <input type="checkbox" formControlName="allowMultiple" />
-              <span>Allow multiple answers</span>
-            </label>
           </div>
 
-          <div class="create-survey__answers" [formArrayName]="'answers'">
-            @for (answer of answersOf(question).controls; track $index; let aIndex = $index) {
-              <div class="create-survey__answer-row">
-                <span class="create-survey__answer-letter">{{ letterFor(aIndex) }}.</span>
+          <div class="create-survey__row">
+            <div class="create-survey__field">
+              <label class="create-survey__label" for="survey-end-date">Set end date <span class="create-survey__optional">(optional)</span></label>
+              <div class="create-survey__field-row">
                 <input
-                  type="text"
-                  [formControlName]="aIndex"
+                  id="survey-end-date"
+                  type="date"
+                  formControlName="expiresAt"
                   class="create-survey__input"
-                  [class.create-survey__input--invalid]="answer.invalid && answer.touched"
-                  [attr.placeholder]="'Answer ' + letterFor(aIndex)"
                 />
-                @if (answersOf(question).length > 2) {
-                  <button
-                    type="button"
-                    class="create-survey__chip"
-                    (click)="removeAnswer(question, aIndex)"
-                    [attr.aria-label]="'Remove answer ' + letterFor(aIndex)"
-                  >×</button>
-                }
+                <button
+                  type="button"
+                  class="create-survey__icon-button"
+                  (click)="clearControl(form.controls.expiresAt)"
+                  aria-label="Clear end date"
+                >
+                  <svg viewBox="0 0 18 20" width="18" height="20" aria-hidden="true">
+                    <path fill="currentColor" d="M3.25 19.5C2.65417 19.5 2.1441 19.2878 1.71979 18.8635C1.29549 18.4392 1.08333 17.9292 1.08333 17.3333V3.25C0.776389 3.25 0.519097 3.14618 0.311458 2.93854C0.103819 2.7309 0 2.47361 0 2.16667C0 1.85972 0.103819 1.60243 0.311458 1.39479C0.519097 1.18715 0.776389 1.08333 1.08333 1.08333H5.41667C5.41667 0.776389 5.52049 0.519097 5.72813 0.311458C5.93576 0.103819 6.19306 0 6.5 0H10.8333C11.1403 0 11.3976 0.103819 11.6052 0.311458C11.8128 0.519097 11.9167 0.776389 11.9167 1.08333H16.25C16.5569 1.08333 16.8142 1.18715 17.0219 1.39479C17.2295 1.60243 17.3333 1.85972 17.3333 2.16667C17.3333 2.47361 17.2295 2.7309 17.0219 2.93854C16.8142 3.14618 16.5569 3.25 16.25 3.25V17.3333C16.25 17.9292 16.0378 18.4392 15.6135 18.8635C15.1892 19.2878 14.6792 19.5 14.0833 19.5H3.25ZM14.0833 3.25H3.25V17.3333H14.0833V3.25ZM6.5 15.1667C6.80694 15.1667 7.06424 15.0628 7.27188 14.8552C7.47951 14.6476 7.58333 14.3903 7.58333 14.0833V6.5C7.58333 6.19306 7.47951 5.93576 7.27188 5.72813C7.06424 5.52049 6.80694 5.41667 6.5 5.41667C6.19306 5.41667 5.93576 5.52049 5.72813 5.72813C5.52049 5.93576 5.41667 6.19306 5.41667 6.5V14.0833C5.41667 14.3903 5.52049 14.6476 5.72813 14.8552C5.93576 15.0628 6.19306 15.1667 6.5 15.1667ZM10.8333 15.1667C11.1403 15.1667 11.3976 15.0628 11.6052 14.8552C11.8128 14.6476 11.9167 14.3903 11.9167 14.0833V6.5C11.9167 6.19306 11.8128 5.93576 11.6052 5.72813C11.3976 5.52049 11.1403 5.41667 10.8333 5.41667C10.5264 5.41667 10.2691 5.52049 10.0615 5.72813C9.85382 5.93576 9.75 6.19306 9.75 6.5V14.0833C9.75 14.3903 9.85382 14.6476 10.0615 14.8552C10.2691 15.0628 10.5264 15.1667 10.8333 15.1667Z"/>
+                  </svg>
+                </button>
               </div>
-            }
-          </div>
+            </div>
 
-          @if (answersOf(question).length < 6) {
+            <div class="create-survey__field">
+              <label class="create-survey__label" for="survey-category">Choose category</label>
+              <select id="survey-category" formControlName="category" class="create-survey__input">
+                @for (category of categories; track category) {
+                  <option [value]="category">{{ category }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="create-survey__field create-survey__top-right">
+          <label class="create-survey__label" for="survey-description">Describing text <span class="create-survey__optional">(optional)</span></label>
+          <div class="create-survey__field-row create-survey__field-row--textarea">
+            <textarea
+              id="survey-description"
+              formControlName="description"
+              class="create-survey__input create-survey__input--textarea"
+              rows="5"
+              placeholder="Add context so people understand what this survey is about."
+            ></textarea>
             <button
               type="button"
-              class="create-survey__add"
-              (click)="addAnswer(question)"
-            >+ Add answer</button>
-          } @else {
-            <p class="create-survey__hint">You can add up to 6 answer fields.</p>
-          }
-        </fieldset>
-      }
+              class="create-survey__icon-button"
+              (click)="clearControl(form.controls.description)"
+              aria-label="Clear describing text"
+            >
+              <svg viewBox="0 0 18 20" width="18" height="20" aria-hidden="true">
+                <path fill="currentColor" d="M3.25 19.5C2.65417 19.5 2.1441 19.2878 1.71979 18.8635C1.29549 18.4392 1.08333 17.9292 1.08333 17.3333V3.25C0.776389 3.25 0.519097 3.14618 0.311458 2.93854C0.103819 2.7309 0 2.47361 0 2.16667C0 1.85972 0.103819 1.60243 0.311458 1.39479C0.519097 1.18715 0.776389 1.08333 1.08333 1.08333H5.41667C5.41667 0.776389 5.52049 0.519097 5.72813 0.311458C5.93576 0.103819 6.19306 0 6.5 0H10.8333C11.1403 0 11.3976 0.103819 11.6052 0.311458C11.8128 0.519097 11.9167 0.776389 11.9167 1.08333H16.25C16.5569 1.08333 16.8142 1.18715 17.0219 1.39479C17.2295 1.60243 17.3333 1.85972 17.3333 2.16667C17.3333 2.47361 17.2295 2.7309 17.0219 2.93854C16.8142 3.14618 16.5569 3.25 16.25 3.25V17.3333C16.25 17.9292 16.0378 18.4392 15.6135 18.8635C15.1892 19.2878 14.6792 19.5 14.0833 19.5H3.25ZM14.0833 3.25H3.25V17.3333H14.0833V3.25ZM6.5 15.1667C6.80694 15.1667 7.06424 15.0628 7.27188 14.8552C7.47951 14.6476 7.58333 14.3903 7.58333 14.0833V6.5C7.58333 6.19306 7.47951 5.93576 7.27188 5.72813C7.06424 5.52049 6.80694 5.41667 6.5 5.41667C6.19306 5.41667 5.93576 5.52049 5.72813 5.72813C5.52049 5.93576 5.41667 6.19306 5.41667 6.5V14.0833C5.41667 14.3903 5.52049 14.6476 5.72813 14.8552C5.93576 15.0628 6.19306 15.1667 6.5 15.1667ZM10.8333 15.1667C11.1403 15.1667 11.3976 15.0628 11.6052 14.8552C11.8128 14.6476 11.9167 14.3903 11.9167 14.0833V6.5C11.9167 6.19306 11.8128 5.93576 11.6052 5.72813C11.3976 5.52049 11.1403 5.41667 10.8333 5.41667C10.5264 5.41667 10.2691 5.52049 10.0615 5.72813C9.85382 5.93576 9.75 6.19306 9.75 6.5V14.0833C9.75 14.3903 9.85382 14.6476 10.0615 14.8552C10.2691 15.0628 10.5264 15.1667 10.8333 15.1667Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
 
-      <button
-        type="button"
-        class="create-survey__add-question"
-        (click)="addQuestion()"
-      >+ Add next question</button>
+      <div class="create-survey__questions">
+        @for (question of questions.controls; track $index; let qIndex = $index) {
+          <fieldset class="create-survey__question" [formGroup]="question">
+            <header class="create-survey__question-header">
+              <legend class="create-survey__question-title">{{ qIndex + 1 }}. Question</legend>
+              @if (qIndex === 0) {
+                <button
+                  type="button"
+                  class="create-survey__icon-button"
+                  (click)="clearQuestionInputs(0)"
+                  aria-label="Clear question 1 inputs"
+                >
+                  <svg viewBox="0 0 18 20" width="18" height="20" aria-hidden="true">
+                    <path fill="currentColor" d="M3.25 19.5C2.65417 19.5 2.1441 19.2878 1.71979 18.8635C1.29549 18.4392 1.08333 17.9292 1.08333 17.3333V3.25C0.776389 3.25 0.519097 3.14618 0.311458 2.93854C0.103819 2.7309 0 2.47361 0 2.16667C0 1.85972 0.103819 1.60243 0.311458 1.39479C0.519097 1.18715 0.776389 1.08333 1.08333 1.08333H5.41667C5.41667 0.776389 5.52049 0.519097 5.72813 0.311458C5.93576 0.103819 6.19306 0 6.5 0H10.8333C11.1403 0 11.3976 0.103819 11.6052 0.311458C11.8128 0.519097 11.9167 0.776389 11.9167 1.08333H16.25C16.5569 1.08333 16.8142 1.18715 17.0219 1.39479C17.2295 1.60243 17.3333 1.85972 17.3333 2.16667C17.3333 2.47361 17.2295 2.7309 17.0219 2.93854C16.8142 3.14618 16.5569 3.25 16.25 3.25V17.3333C16.25 17.9292 16.0378 18.4392 15.6135 18.8635C15.1892 19.2878 14.6792 19.5 14.0833 19.5H3.25ZM14.0833 3.25H3.25V17.3333H14.0833V3.25ZM6.5 15.1667C6.80694 15.1667 7.06424 15.0628 7.27188 14.8552C7.47951 14.6476 7.58333 14.3903 7.58333 14.0833V6.5C7.58333 6.19306 7.47951 5.93576 7.27188 5.72813C7.06424 5.52049 6.80694 5.41667 6.5 5.41667C6.19306 5.41667 5.93576 5.52049 5.72813 5.72813C5.52049 5.93576 5.41667 6.19306 5.41667 6.5V14.0833C5.41667 14.3903 5.52049 14.6476 5.72813 14.8552C5.93576 15.0628 6.19306 15.1667 6.5 15.1667ZM10.8333 15.1667C11.1403 15.1667 11.3976 15.0628 11.6052 14.8552C11.8128 14.6476 11.9167 14.3903 11.9167 14.0833V6.5C11.9167 6.19306 11.8128 5.93576 11.6052 5.72813C11.3976 5.52049 11.1403 5.41667 10.8333 5.41667C10.5264 5.41667 10.2691 5.52049 10.0615 5.72813C9.85382 5.93576 9.75 6.19306 9.75 6.5V14.0833C9.75 14.3903 9.85382 14.6476 10.0615 14.8552C10.2691 15.0628 10.5264 15.1667 10.8333 15.1667Z"/>
+                  </svg>
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="create-survey__icon-button"
+                  (click)="removeQuestion(qIndex)"
+                  [attr.aria-label]="'Remove question ' + (qIndex + 1)"
+                >
+                  <svg viewBox="0 0 18 20" width="18" height="20" aria-hidden="true">
+                    <path fill="currentColor" d="M3.25 19.5C2.65417 19.5 2.1441 19.2878 1.71979 18.8635C1.29549 18.4392 1.08333 17.9292 1.08333 17.3333V3.25C0.776389 3.25 0.519097 3.14618 0.311458 2.93854C0.103819 2.7309 0 2.47361 0 2.16667C0 1.85972 0.103819 1.60243 0.311458 1.39479C0.519097 1.18715 0.776389 1.08333 1.08333 1.08333H5.41667C5.41667 0.776389 5.52049 0.519097 5.72813 0.311458C5.93576 0.103819 6.19306 0 6.5 0H10.8333C11.1403 0 11.3976 0.103819 11.6052 0.311458C11.8128 0.519097 11.9167 0.776389 11.9167 1.08333H16.25C16.5569 1.08333 16.8142 1.18715 17.0219 1.39479C17.2295 1.60243 17.3333 1.85972 17.3333 2.16667C17.3333 2.47361 17.2295 2.7309 17.0219 2.93854C16.8142 3.14618 16.5569 3.25 16.25 3.25V17.3333C16.25 17.9292 16.0378 18.4392 15.6135 18.8635C15.1892 19.2878 14.6792 19.5 14.0833 19.5H3.25ZM14.0833 3.25H3.25V17.3333H14.0833V3.25ZM6.5 15.1667C6.80694 15.1667 7.06424 15.0628 7.27188 14.8552C7.47951 14.6476 7.58333 14.3903 7.58333 14.0833V6.5C7.58333 6.19306 7.47951 5.93576 7.27188 5.72813C7.06424 5.52049 6.80694 5.41667 6.5 5.41667C6.19306 5.41667 5.93576 5.52049 5.72813 5.72813C5.52049 5.93576 5.41667 6.19306 5.41667 6.5V14.0833C5.41667 14.3903 5.52049 14.6476 5.72813 14.8552C5.93576 15.0628 6.19306 15.1667 6.5 15.1667ZM10.8333 15.1667C11.1403 15.1667 11.3976 15.0628 11.6052 14.8552C11.8128 14.6476 11.9167 14.3903 11.9167 14.0833V6.5C11.9167 6.19306 11.8128 5.93576 11.6052 5.72813C11.3976 5.52049 11.1403 5.41667 10.8333 5.41667C10.5264 5.41667 10.2691 5.52049 10.0615 5.72813C9.85382 5.93576 9.75 6.19306 9.75 6.5V14.0833C9.75 14.3903 9.85382 14.6476 10.0615 14.8552C10.2691 15.0628 10.5264 15.1667 10.8333 15.1667Z"/>
+                  </svg>
+                </button>
+              }
+            </header>
+
+            <input
+              type="text"
+              formControlName="text"
+              class="create-survey__input"
+              [class.create-survey__input--invalid]="question.controls.text.invalid && question.controls.text.touched"
+              placeholder="What do you want to ask?"
+            />
+            @if (question.controls.text.invalid && question.controls.text.touched) {
+              <span class="create-survey__field-error">Please enter a question.</span>
+            }
+
+            <div class="create-survey__answers-header">
+              <span class="create-survey__label">Answers</span>
+              <label class="create-survey__multi">
+                <input type="checkbox" formControlName="allowMultiple" />
+                <span>Allow multiple answers</span>
+              </label>
+            </div>
+
+            <div class="create-survey__answers" [formArrayName]="'answers'">
+              @for (answer of answersOf(question).controls; track $index; let aIndex = $index) {
+                <div class="create-survey__answer-row">
+                  <span class="create-survey__answer-letter">{{ letterFor(aIndex) }}.</span>
+                  <input
+                    type="text"
+                    [formControlName]="aIndex"
+                    class="create-survey__input"
+                    [class.create-survey__input--invalid]="answer.invalid && answer.touched"
+                    [attr.placeholder]="'Answer ' + letterFor(aIndex)"
+                  />
+                  @if (aIndex < 2) {
+                    <button
+                      type="button"
+                      class="create-survey__icon-button"
+                      (click)="clearControl(answer)"
+                      [attr.aria-label]="'Clear answer ' + letterFor(aIndex)"
+                    >
+                      <svg viewBox="0 0 18 20" width="18" height="20" aria-hidden="true">
+                        <path fill="currentColor" d="M3.25 19.5C2.65417 19.5 2.1441 19.2878 1.71979 18.8635C1.29549 18.4392 1.08333 17.9292 1.08333 17.3333V3.25C0.776389 3.25 0.519097 3.14618 0.311458 2.93854C0.103819 2.7309 0 2.47361 0 2.16667C0 1.85972 0.103819 1.60243 0.311458 1.39479C0.519097 1.18715 0.776389 1.08333 1.08333 1.08333H5.41667C5.41667 0.776389 5.52049 0.519097 5.72813 0.311458C5.93576 0.103819 6.19306 0 6.5 0H10.8333C11.1403 0 11.3976 0.103819 11.6052 0.311458C11.8128 0.519097 11.9167 0.776389 11.9167 1.08333H16.25C16.5569 1.08333 16.8142 1.18715 17.0219 1.39479C17.2295 1.60243 17.3333 1.85972 17.3333 2.16667C17.3333 2.47361 17.2295 2.7309 17.0219 2.93854C16.8142 3.14618 16.5569 3.25 16.25 3.25V17.3333C16.25 17.9292 16.0378 18.4392 15.6135 18.8635C15.1892 19.2878 14.6792 19.5 14.0833 19.5H3.25ZM14.0833 3.25H3.25V17.3333H14.0833V3.25ZM6.5 15.1667C6.80694 15.1667 7.06424 15.0628 7.27188 14.8552C7.47951 14.6476 7.58333 14.3903 7.58333 14.0833V6.5C7.58333 6.19306 7.47951 5.93576 7.27188 5.72813C7.06424 5.52049 6.80694 5.41667 6.5 5.41667C6.19306 5.41667 5.93576 5.52049 5.72813 5.72813C5.52049 5.93576 5.41667 6.19306 5.41667 6.5V14.0833C5.41667 14.3903 5.52049 14.6476 5.72813 14.8552C5.93576 15.0628 6.19306 15.1667 6.5 15.1667ZM10.8333 15.1667C11.1403 15.1667 11.3976 15.0628 11.6052 14.8552C11.8128 14.6476 11.9167 14.3903 11.9167 14.0833V6.5C11.9167 6.19306 11.8128 5.93576 11.6052 5.72813C11.3976 5.52049 11.1403 5.41667 10.8333 5.41667C10.5264 5.41667 10.2691 5.52049 10.0615 5.72813C9.85382 5.93576 9.75 6.19306 9.75 6.5V14.0833C9.75 14.3903 9.85382 14.6476 10.0615 14.8552C10.2691 15.0628 10.5264 15.1667 10.8333 15.1667Z"/>
+                      </svg>
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="create-survey__icon-button"
+                      (click)="removeAnswer(question, aIndex)"
+                      [attr.aria-label]="'Remove answer ' + letterFor(aIndex)"
+                    >
+                      <svg viewBox="0 0 18 20" width="18" height="20" aria-hidden="true">
+                        <path fill="currentColor" d="M3.25 19.5C2.65417 19.5 2.1441 19.2878 1.71979 18.8635C1.29549 18.4392 1.08333 17.9292 1.08333 17.3333V3.25C0.776389 3.25 0.519097 3.14618 0.311458 2.93854C0.103819 2.7309 0 2.47361 0 2.16667C0 1.85972 0.103819 1.60243 0.311458 1.39479C0.519097 1.18715 0.776389 1.08333 1.08333 1.08333H5.41667C5.41667 0.776389 5.52049 0.519097 5.72813 0.311458C5.93576 0.103819 6.19306 0 6.5 0H10.8333C11.1403 0 11.3976 0.103819 11.6052 0.311458C11.8128 0.519097 11.9167 0.776389 11.9167 1.08333H16.25C16.5569 1.08333 16.8142 1.18715 17.0219 1.39479C17.2295 1.60243 17.3333 1.85972 17.3333 2.16667C17.3333 2.47361 17.2295 2.7309 17.0219 2.93854C16.8142 3.14618 16.5569 3.25 16.25 3.25V17.3333C16.25 17.9292 16.0378 18.4392 15.6135 18.8635C15.1892 19.2878 14.6792 19.5 14.0833 19.5H3.25ZM14.0833 3.25H3.25V17.3333H14.0833V3.25ZM6.5 15.1667C6.80694 15.1667 7.06424 15.0628 7.27188 14.8552C7.47951 14.6476 7.58333 14.3903 7.58333 14.0833V6.5C7.58333 6.19306 7.47951 5.93576 7.27188 5.72813C7.06424 5.52049 6.80694 5.41667 6.5 5.41667C6.19306 5.41667 5.93576 5.52049 5.72813 5.72813C5.52049 5.93576 5.41667 6.19306 5.41667 6.5V14.0833C5.41667 14.3903 5.52049 14.6476 5.72813 14.8552C5.93576 15.0628 6.19306 15.1667 6.5 15.1667ZM10.8333 15.1667C11.1403 15.1667 11.3976 15.0628 11.6052 14.8552C11.8128 14.6476 11.9167 14.3903 11.9167 14.0833V6.5C11.9167 6.19306 11.8128 5.93576 11.6052 5.72813C11.3976 5.52049 11.1403 5.41667 10.8333 5.41667C10.5264 5.41667 10.2691 5.52049 10.0615 5.72813C9.85382 5.93576 9.75 6.19306 9.75 6.5V14.0833C9.75 14.3903 9.85382 14.6476 10.0615 14.8552C10.2691 15.0628 10.5264 15.1667 10.8333 15.1667Z"/>
+                      </svg>
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+
+            @if (answersOf(question).length < 6) {
+              <button
+                type="button"
+                class="create-survey__add"
+                (click)="addAnswer(question)"
+              >
+                <span>Add answer</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" class="create-survey__add-icon">
+                  <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            } @else {
+              <p class="create-survey__hint">You can add up to 6 answer fields.</p>
+            }
+          </fieldset>
+        }
+
+        <button
+          type="button"
+          class="create-survey__add-question"
+          (click)="addQuestion()"
+        >
+          <span>Add next question</span>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" class="create-survey__add-icon">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     @if (error()) {
       <p class="create-survey__error" role="alert">{{ error() }}</p>
     }
 
-    <button
-      type="submit"
-      class="create-survey__submit"
-      [disabled]="submitting()"
-    >
-      {{ submitting() ? 'Publishing...' : 'Publish' }}
-    </button>
+    <div class="create-survey__shell-footer">
+      <button
+        type="submit"
+        class="create-survey__submit"
+        [disabled]="submitting()"
+      >
+        <span>{{ submitting() ? 'Publishing...' : 'Publish' }}</span>
+        <span class="create-survey__submit-icon-slot" aria-hidden="true">
+          <svg viewBox="0 0 18 16" width="18" height="16" class="create-survey__submit-icon">
+            <path fill="currentColor" d="M6.156 12.508 16.021 0.428C16.254 0.142 16.526 0 16.836 0c.31 0 .582.142.815.428.233.285.349.624.349 1.016 0 .392-.116.73-.349 1.016L6.97 15.572c-.232.286-.504.428-.814.428-.311 0-.582-.142-.815-.428L0.335 9.443c-.233-.285-.344-.624-.334-1.016.009-.392.131-.73.363-1.016.233-.285.51-.428.83-.428.32 0 .596.143.829.428l4.133 5.097z"/>
+          </svg>
+        </span>
+      </button>
+    </div>
   </form>
 </main>
+

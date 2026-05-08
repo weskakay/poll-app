@@ -369,8 +369,10 @@
   transition: background 150ms ease;
 }
 
-.home__sort-option:hover {
+.home__sort-option:hover,
+.home__sort-option:focus-visible {
   background: var(--color-tint-purple);
+  outline: none;
 }
 
 .home__sort-option--selected {
@@ -394,6 +396,14 @@
 @media (min-width: 700px) {
   .home__list {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .home__list {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: var(--space-2);
   }
 }
 

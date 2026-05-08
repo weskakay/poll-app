@@ -3,13 +3,13 @@
   --color-primary:        #35273A;
   --color-accent:         #FFB770;
   --color-accent-light:   #FFCFA1;
+  --color-accent-title:   #EE9236;
   --color-card-bg:        #FAF5FE;
   --color-bg-light:       #FEFDFF;
   --color-tint-orange:    #FEE9D4;
   --color-tint-purple:    #F4E9FB;
   --color-accent-strong:  #D79451;
   --color-bar-track:      #EDEDED;
-  --color-scrollbar:      #BABABA;
 
   --color-text-on-dark:   #FEFDFF;
   --color-text-on-light:  #35273A;
@@ -21,6 +21,10 @@
   --overlay-list-card:       rgba(217, 217, 217, 0.08);
   --overlay-list-card-hover: rgba(217, 217, 217, 0.16);
   --overlay-dropdown:        rgba(217, 217, 217, 0.12);
+  --overlay-form-inner:      rgba(142, 112, 153, 0.16);
+  --overlay-panel:           rgba(142, 112, 153, 0.1);
+  --overlay-row-hover:       rgba(255, 207, 161, 0.4);
+  --overlay-tertiary-hover:  rgba(250, 245, 254, 0.2);
 
   /* Fonts */
   --font-display: 'Nerko One', cursive;
@@ -64,4 +68,29 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: var(--radius-cta);
+  box-shadow: 3px 3px 3.2px rgba(0, 0, 0, 0.25);
+}
+
+body.theme-light {
+  background: var(--color-card-bg);
+  color: var(--color-text-on-light);
 }

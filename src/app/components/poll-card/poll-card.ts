@@ -16,6 +16,7 @@ export class PollCard {
   readonly poll = input.required<Poll>();
   readonly variant = input<PollCardVariant>('list');
 
+  /** Human-readable countdown shown on the card, or null when no end date is set. */
   protected readonly endsInLabel = computed<string | null>(() => {
     const expiresAt = this.poll().expiresAt;
     if (!expiresAt) return null;

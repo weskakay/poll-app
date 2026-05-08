@@ -64,6 +64,7 @@ export class PollService implements OnDestroy {
   readonly polls = signal<Poll[]>([]);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly publishedMessage = signal<string | null>(null);
 
   /** Fetches all polls with their nested questions and answers. */
   async loadAll(): Promise<void> {
@@ -86,11 +87,26 @@ export class PollService implements OnDestroy {
     this.loading.set(false);
   }
 
-  /** Inserts a poll, its questions and answers in a three-step write. */
-  async create(input: CreatePollInput): Promise<boolean> {
+  /** Inserts a poll with its questions and answers; rolls back on partial failure. */
+  async create(input: CreatePollInput): Promise<string | null> {
     this.error.set(null);
 
-    const { data: poll, error: pollError } = await this.supabase.client
+    const pollId = await this.insertPollRow(input);
+    if (!pollId) return null;
+
+    const ok = await this.insertQuestionsAndAnswers(pollId, input.questions);
+    if (!ok) {
+      await this.delete(pollId);
+      return null;
+    }
+
+    await this.loadAll();
+    return pollId;
+  }
+
+  /** Inserts the poll row and returns its id, or null if the insert failed. */
+  private async insertPollRow(input: CreatePollInput): Promise<string | null> {
+    const { data, error } = await this.supabase.client
       .from('polls')
       .insert({
         title: input.title,
@@ -102,16 +118,23 @@ export class PollService implements OnDestroy {
       .select('id')
       .single();
 
-    if (pollError || !poll) {
-      this.error.set(pollError?.message ?? 'Could not create poll');
-      return false;
+    if (error || !data) {
+      this.error.set(error?.message ?? 'Could not create poll');
+      return null;
     }
+    return data.id;
+  }
 
-    for (const [qIndex, question] of input.questions.entries()) {
+  /** Inserts all questions with their answers; returns false on the first failure. */
+  private async insertQuestionsAndAnswers(
+    pollId: string,
+    questions: CreatePollQuestionInput[],
+  ): Promise<boolean> {
+    for (const [qIndex, question] of questions.entries()) {
       const { data: questionRow, error: qError } = await this.supabase.client
         .from('poll_questions')
         .insert({
-          poll_id: poll.id,
+          poll_id: pollId,
           position: qIndex + 1,
           text: question.text,
           allow_multiple: question.allowMultiple,
@@ -120,7 +143,6 @@ export class PollService implements OnDestroy {
         .single();
 
       if (qError || !questionRow) {
-        await this.delete(poll.id);
         this.error.set(qError?.message ?? 'Could not create question');
         return false;
       }
@@ -135,13 +157,10 @@ export class PollService implements OnDestroy {
         .insert(answerRows);
 
       if (aError) {
-        await this.delete(poll.id);
         this.error.set(aError.message);
         return false;
       }
     }
-
-    await this.loadAll();
     return true;
   }
 
@@ -198,15 +217,11 @@ export class PollService implements OnDestroy {
       return;
     }
 
-    const reload = (): void => {
-      this.loadAll();
-    };
-
     this.channel = this.supabase.client
       .channel('polls-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'polls' }, reload)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'poll_questions' }, reload)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'poll_answers' }, reload)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'polls' }, () => this.loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'poll_questions' }, () => this.loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'poll_answers' }, () => this.loadAll())
       .subscribe();
   }
 
