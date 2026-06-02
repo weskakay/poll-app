@@ -43,6 +43,9 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
+# Local seed/demo data
+seed.sql
+
 # Environment / Secrets
 /src/environments/environment.ts
 /src/environments/environment.development.ts

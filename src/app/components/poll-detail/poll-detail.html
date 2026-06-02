@@ -6,11 +6,14 @@
   <main class="poll-detail">
     <div class="poll-detail__topbar">
       <a routerLink="/" class="poll-detail__back">← Back</a>
-      <button
-        type="button"
-        (click)="requestDelete()"
-        class="poll-detail__delete"
-      >Delete</button>
+      <div class="poll-detail__topbar-actions">
+        <a [routerLink]="['/poll', poll()!.id, 'edit']" class="poll-detail__edit">Edit</a>
+        <button
+          type="button"
+          (click)="requestDelete()"
+          class="poll-detail__delete"
+        >Delete</button>
+      </div>
     </div>
 
     <div class="poll-detail__layout">

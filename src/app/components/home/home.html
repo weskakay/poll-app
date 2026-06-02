@@ -55,10 +55,16 @@
 
       @if (endingSoon().length > 0) {
         <h3 class="home__subsection-title">Ending soon surveys</h3>
-        <div class="home__highlights">
-          @for (poll of endingSoon(); track poll.id) {
-            <app-poll-card [poll]="poll" variant="highlight" />
-          }
+        <div class="home__carousel">
+          <div class="home__highlights" #highlights>
+            @for (poll of endingSoon(); track poll.id) {
+              <app-poll-card [poll]="poll" variant="highlight" />
+            }
+          </div>
+          <div class="home__carousel-nav" aria-hidden="true">
+            <button type="button" class="home__carousel-btn" (click)="scrollCarousel(-1)" aria-label="Previous">&#8249;</button>
+            <button type="button" class="home__carousel-btn" (click)="scrollCarousel(1)" aria-label="Next">&#8250;</button>
+          </div>
         </div>
       }
 
@@ -72,7 +78,7 @@
             [class.home__filter--active]="status() === 'active'"
             (click)="status.set('active')"
           >
-            Active survey
+            <span class="home__filter-short">Active</span><span class="home__filter-suffix"> survey</span>
           </button>
           <button
             type="button"
@@ -82,7 +88,17 @@
             [class.home__filter--active]="status() === 'past'"
             (click)="status.set('past')"
           >
-            Past survey
+            <span class="home__filter-short">Past</span><span class="home__filter-suffix"> survey</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="status() === 'draft'"
+            class="home__filter"
+            [class.home__filter--active]="status() === 'draft'"
+            (click)="status.set('draft')"
+          >
+            <span class="home__filter-short">Draft</span><span class="home__filter-suffix"> survey</span>
           </button>
         </div>
 
@@ -137,13 +153,23 @@
         </div>
       </div>
 
-      <div class="home__list">
-        @for (poll of visiblePolls(); track poll.id) {
-          <app-poll-card [poll]="poll" variant="list" />
-        } @empty {
-          <p class="home__status">No polls match this filter.</p>
-        }
-      </div>
+      @if (status() === 'draft') {
+        <div class="home__list">
+          @for (poll of draftPolls(); track poll.id) {
+            <app-poll-card [poll]="poll" variant="list" />
+          } @empty {
+            <p class="home__status">No drafts saved yet.</p>
+          }
+        </div>
+      } @else {
+        <div class="home__list">
+          @for (poll of visiblePolls(); track poll.id) {
+            <app-poll-card [poll]="poll" variant="list" />
+          } @empty {
+            <p class="home__status">No polls match this filter.</p>
+          }
+        </div>
+      }
     </section>
   }
 </main>

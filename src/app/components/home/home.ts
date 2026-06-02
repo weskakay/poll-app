@@ -1,10 +1,10 @@
-import { Component, computed, ElementRef, HostListener, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PollService } from '../../services/poll.service';
 import { PollCard } from '../poll-card/poll-card';
 import { POLL_CATEGORIES, type Poll, type PollCategory } from '../../interfaces/poll.interface';
 
-type StatusFilter = 'active' | 'past';
+type StatusFilter = 'active' | 'past' | 'draft';
 
 /** Landing page with hero, ending-soon highlights and a filtered, sortable poll list. */
 @Component({
@@ -16,6 +16,8 @@ type StatusFilter = 'active' | 'past';
 export class Home implements OnInit {
   private readonly pollService = inject(PollService);
   private readonly elementRef = inject(ElementRef);
+
+  @ViewChild('highlights') private highlightsEl?: ElementRef<HTMLElement>;
 
   protected readonly loading = this.pollService.loading;
   protected readonly error = this.pollService.error;
@@ -44,6 +46,15 @@ export class Home implements OnInit {
       const matchesStatus = status === 'past' ? isPast(p.expiresAt) : !isPast(p.expiresAt);
       const matchesCategory = cat === 'all' || p.category === cat;
       return matchesStatus && matchesCategory;
+    });
+  });
+
+  /** Draft polls filtered by the current category selection. */
+  protected readonly draftPolls = computed<Poll[]>(() => {
+    const cat = this.categoryFilter();
+    return this.pollService.polls().filter((p) => {
+      if (p.status !== 'draft') return false;
+      return cat === 'all' || p.category === cat;
     });
   });
 
@@ -77,6 +88,14 @@ export class Home implements OnInit {
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
     this.dropdownOpen.set(false);
+  }
+
+  /** Scrolls the ending-soon carousel by one card in the given direction. */
+  protected scrollCarousel(direction: 1 | -1): void {
+    const el = this.highlightsEl?.nativeElement;
+    if (!el) return;
+    const cardWidth = el.firstElementChild?.clientWidth ?? 300;
+    el.scrollBy({ left: direction * (cardWidth + 16), behavior: 'smooth' });
   }
 }
 

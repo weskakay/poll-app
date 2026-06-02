@@ -164,12 +164,15 @@ export class PollService implements OnDestroy {
     return true;
   }
 
-  /** Increments the vote count of each answer in the given list. */
+  /** Optimistically increments each answer in the local store, then persists; rolls back on error. */
   async vote(answerIds: string[]): Promise<boolean> {
     this.error.set(null);
 
+    const snapshot = this.polls();
+    this.polls.set(applyIncrement(snapshot, answerIds, 1));
+
     for (const answerId of answerIds) {
-      const current = findAnswer(this.polls(), answerId);
+      const current = findAnswer(snapshot, answerId);
       if (!current) continue;
 
       const { error } = await this.supabase.client
@@ -178,10 +181,47 @@ export class PollService implements OnDestroy {
         .eq('id', answerId);
 
       if (error) {
+        this.polls.set(snapshot);
         this.error.set(error.message);
         return false;
       }
     }
+
+    return true;
+  }
+
+  /** Updates poll metadata and replaces all questions and answers. Existing votes are lost. */
+  async update(id: string, input: CreatePollInput): Promise<boolean> {
+    this.error.set(null);
+
+    const { error: pollError } = await this.supabase.client
+      .from('polls')
+      .update({
+        title: input.title,
+        description: input.description,
+        category: input.category,
+        expires_at: input.expiresAt,
+        status: input.status,
+      })
+      .eq('id', id);
+
+    if (pollError) {
+      this.error.set(pollError.message);
+      return false;
+    }
+
+    const { error: deleteError } = await this.supabase.client
+      .from('poll_questions')
+      .delete()
+      .eq('poll_id', id);
+
+    if (deleteError) {
+      this.error.set(deleteError.message);
+      return false;
+    }
+
+    const ok = await this.insertQuestionsAndAnswers(id, input.questions);
+    if (!ok) return false;
 
     await this.loadAll();
     return true;
@@ -281,4 +321,17 @@ function findAnswer(polls: Poll[], answerId: string): PollAnswer | undefined {
     }
   }
   return undefined;
+}
+
+function applyIncrement(polls: Poll[], answerIds: string[], delta: number): Poll[] {
+  const ids = new Set(answerIds);
+  return polls.map((poll) => ({
+    ...poll,
+    questions: poll.questions.map((question) => ({
+      ...question,
+      answers: question.answers.map((answer) =>
+        ids.has(answer.id) ? { ...answer, votes: answer.votes + delta } : answer,
+      ),
+    })),
+  }));
 }
