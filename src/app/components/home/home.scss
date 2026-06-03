@@ -204,12 +204,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  padding-left: var(--space-5);
+  padding: 0 var(--space-4);
 }
 
 @media (min-width: 900px) {
   .home__section {
-    padding-left: calc(var(--space-6) + var(--space-5));
+    padding: 0 calc(var(--space-6) + var(--space-5));
   }
 }
 
@@ -438,7 +438,7 @@
 
 .home__list {
   display: grid;
-  gap: var(--space-3);
+  gap: 15px;
   grid-template-columns: 1fr;
 }
 
