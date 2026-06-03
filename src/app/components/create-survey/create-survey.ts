@@ -95,39 +95,22 @@ export class CreateSurvey {
 
   /** Saves the current form as a draft (not visible in the public list). */
   protected async saveDraft(): Promise<void> {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    await this.createPoll('draft');
+  }
 
-    this.submitting.set(true);
-    const value = this.form.getRawValue();
-    const newPollId = await this.pollService.create({
-      title: value.title,
-      description: value.description.trim() ? value.description : null,
-      category: value.category,
-      expiresAt: value.expiresAt || null,
-      status: 'draft',
-      questions: value.questions.map((q) => ({
-        text: q.text,
-        allowMultiple: q.allowMultiple,
-        answerLabels: q.answers,
-      })),
-    });
-    this.submitting.set(false);
-
+  /** Validates the form and publishes the poll, then navigates back to home on success. */
+  protected async submit(): Promise<void> {
+    const newPollId = await this.createPoll('published');
     if (newPollId) {
-      this.router.navigate(['/']);
+      this.pollService.publishedMessage.set('Your survey is now published');
     }
   }
 
-  /** Validates the form and creates the poll, then notifies and navigates back to home on success. */
-  protected async submit(): Promise<void> {
+  private async createPoll(status: 'published' | 'draft'): Promise<string | null> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      return;
+      return null;
     }
-
     this.submitting.set(true);
     const value = this.form.getRawValue();
     const newPollId = await this.pollService.create({
@@ -135,7 +118,7 @@ export class CreateSurvey {
       description: value.description.trim() ? value.description : null,
       category: value.category,
       expiresAt: value.expiresAt || null,
-      status: 'published',
+      status,
       questions: value.questions.map((q) => ({
         text: q.text,
         allowMultiple: q.allowMultiple,
@@ -143,11 +126,8 @@ export class CreateSurvey {
       })),
     });
     this.submitting.set(false);
-
-    if (newPollId) {
-      this.pollService.publishedMessage.set('Your survey is now published');
-      this.router.navigate(['/']);
-    }
+    if (newPollId) this.router.navigate(['/']);
+    return newPollId;
   }
 
   private createQuestion(): QuestionGroup {

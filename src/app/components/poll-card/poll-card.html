@@ -8,6 +8,9 @@
     <span class="poll-card__category">{{ poll().category }}</span>
   }
   <h2 class="poll-card__question">{{ poll().title }}</h2>
+  @if (poll().description) {
+    <p class="poll-card__description">{{ poll().description }}</p>
+  }
   @if (endsInLabel()) {
     <div class="poll-card__meta">
       <span class="poll-card__ends">{{ endsInLabel() }}</span>

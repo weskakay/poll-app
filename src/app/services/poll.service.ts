@@ -193,8 +193,15 @@ export class PollService implements OnDestroy {
   /** Updates poll metadata and replaces all questions and answers. Existing votes are lost. */
   async update(id: string, input: CreatePollInput): Promise<boolean> {
     this.error.set(null);
+    if (!await this.updatePollRow(id, input)) return false;
+    if (!await this.deleteQuestions(id)) return false;
+    if (!await this.insertQuestionsAndAnswers(id, input.questions)) return false;
+    await this.loadAll();
+    return true;
+  }
 
-    const { error: pollError } = await this.supabase.client
+  private async updatePollRow(id: string, input: CreatePollInput): Promise<boolean> {
+    const { error } = await this.supabase.client
       .from('polls')
       .update({
         title: input.title,
@@ -204,27 +211,17 @@ export class PollService implements OnDestroy {
         status: input.status,
       })
       .eq('id', id);
+    if (error) this.error.set(error.message);
+    return !error;
+  }
 
-    if (pollError) {
-      this.error.set(pollError.message);
-      return false;
-    }
-
-    const { error: deleteError } = await this.supabase.client
+  private async deleteQuestions(pollId: string): Promise<boolean> {
+    const { error } = await this.supabase.client
       .from('poll_questions')
       .delete()
-      .eq('poll_id', id);
-
-    if (deleteError) {
-      this.error.set(deleteError.message);
-      return false;
-    }
-
-    const ok = await this.insertQuestionsAndAnswers(id, input.questions);
-    if (!ok) return false;
-
-    await this.loadAll();
-    return true;
+      .eq('poll_id', pollId);
+    if (error) this.error.set(error.message);
+    return !error;
   }
 
   /** Deletes a poll. Cascade removes its questions and answers. */
